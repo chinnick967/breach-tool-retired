@@ -1,42 +1,43 @@
-exports.accounts = {
+exports.apiList = {
     lookup: {
-        name: "lookup",
-        description: "Look up player account using a parameter",
+        name: "Find User",
+        description: "Look up a player's game account using one parameter",
         type: "GET",
         uri: "/api/cs/lookupaccount",
+        note: "Only one field needs to be completed for submission",
         parameters: [
             {
                 name: "EnmasseUserID",
                 prettyName: "En Masse User ID",
                 placeholder: "123456",
                 type: "int",
-                optional: true
+                required: false
             },
             {
                 name: "AccountId",
                 prettyName: "QC Games Account ID",
                 placeholder: "123456",
                 type: "int",
-                optional: true
+                required: false
             },
             {
                 name: "CharacterId",
                 prettyName: "QC Games Character ID",
                 placeholder: "123456",
                 type: "int",
-                optional: true
+                required: false
             },
             {
                 name: "CharacterName",
-                prettyName: "Character's Name (and number tag)",
+                prettyName: "Character's Name/Tag",
                 placeholder: "coolguy#8445",
                 type: "string",
-                optional: true
+                required: false
             }
         ]
     },
     ban: {
-        name: "ban",
+        name: "Ban User",
         description: "Ban a user's account",
         type: "POST",
         uri: "/api/cs/ban",
@@ -46,14 +47,14 @@ exports.accounts = {
                 prettyName: "CS Agent ID",
                 type: "string",
                 placeholder: "CSAgent1",
-                optional: false
+                required: true
             },
             {
                 name: "EnmasseUserIDs",
                 prettyName: "En Masse User IDs",
                 type: "array",
                 placeholder: "123456",
-                optional: false
+                required: true
             },
             {
                 name: "BanDuration",
@@ -67,14 +68,14 @@ exports.accounts = {
                 prettyName: "Ban Memo",
                 placeholder: "This person is mean and said 'nuggets are sooo 2017' to coolguy#8445 at 10:45pm",
                 type: "string",
-                optional: false
+                required: true
             },
             {
                 name: "KickPlayer",
                 prettyName: "Kick Player",
                 placeholder: "true",
                 type: "bool",
-                optional: false
+                required: true
             }
         ]
     }

@@ -4,21 +4,30 @@ var webpack = require('webpack');
 
 module.exports = {
      entry: {
-         js: glob.sync("./client/**/*.js")
+         scripts: glob.sync("./client/src/**/*.js"),
+         styles: glob.sync("./client/src/**/*.scss")
      },
      output: {
          path: path.resolve(__dirname, 'client'),
-         filename: 'main.bundle.js'
+         filename: '[name].bundle.js'
      },
      module: {
          rules: [
              {
-                 test: /\.js$/,
-                 loader: 'babel-loader',
-                 query: {
-                     presets: ['es2015']
-                 }
-             }
+                test: /\.(js|jsx)$/,
+                exclude: /node_modules/,
+                use: {
+                    loader: "babel-loader"
+                }
+             },
+             {
+                test: /\.scss$/,
+                use: [
+                    "style-loader", // creates style nodes from JS strings
+                    "css-loader", // translates CSS into CommonJS
+                    "sass-loader" // compiles Sass to CSS, using Node Sass by default
+                ]
+            }
          ]
      },
      stats: {
