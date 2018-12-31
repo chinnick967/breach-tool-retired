@@ -33,4 +33,8 @@ app.get('/lists', (req, res) => {
     res.send(JSON.stringify(Lists));
 });
 
+app.get('/test', (req, res) => {
+    res.send(JSON.stringify({test: "test"}))
+});
+
 app.listen(8000, ()=> console.log('App listening on port 8000'));

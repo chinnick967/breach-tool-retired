@@ -210,13 +210,13 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 
 function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
 
-function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
-
 function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
 
 
 
@@ -225,17 +225,32 @@ var ApiForm =
 function (_Component) {
   _inherits(ApiForm, _Component);
 
-  function ApiForm() {
+  function ApiForm(props) {
+    var _this;
+
     _classCallCheck(this, ApiForm);
 
-    return _possibleConstructorReturn(this, _getPrototypeOf(ApiForm).apply(this, arguments));
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(ApiForm).call(this, props));
+    _this.handleSubmit = _this.handleSubmit.bind(_assertThisInitialized(_assertThisInitialized(_this)));
+    return _this;
   }
 
   _createClass(ApiForm, [{
     key: "handleSubmit",
     value: function handleSubmit(e) {
       event.preventDefault();
-      alert("Form submitted");
+      var data = new FormData(e.target);
+      console.log(data);
+      fetch('/test', {
+        method: 'POST',
+        body: data
+      }).then(function (response) {
+        return response.json();
+      }).then(function (response) {
+        console.log("FINISHED");
+        console.log(response);
+      });
+      this.props.showResponsePanel(true);
     }
   }, {
     key: "render",
@@ -245,7 +260,9 @@ function (_Component) {
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("form", {
         onSubmit: this.handleSubmit
       }, this.props.data.parameters.map(function (element) {
-        return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", null, element.prettyName, element.type == "string" || element.type == "int" ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+        return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
+          key: element.prettyName
+        }, element.prettyName, element.type == "string" || element.type == "int" ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
           placeholder: element.placeholder,
           type: "text",
           required: element.required
@@ -295,13 +312,13 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 
 function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
 
-function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
-
 function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
 
 
 
@@ -311,24 +328,44 @@ var ApiPanel =
 function (_Component) {
   _inherits(ApiPanel, _Component);
 
-  function ApiPanel() {
+  function ApiPanel(props) {
+    var _this;
+
     _classCallCheck(this, ApiPanel);
 
-    return _possibleConstructorReturn(this, _getPrototypeOf(ApiPanel).apply(this, arguments));
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(ApiPanel).call(this, props));
+    _this.showResponsePanel = _this.showResponsePanel.bind(_assertThisInitialized(_assertThisInitialized(_this)));
+    _this.state = {
+      showResponse: false,
+      response: null
+    };
+    return _this;
   }
 
   _createClass(ApiPanel, [{
+    key: "showResponsePanel",
+    value: function showResponsePanel(bool, response) {
+      this.setState({
+        showResponse: bool,
+        response: response
+      });
+    }
+  }, {
     key: "render",
     value: function render() {
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "modal"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "panel container"
+        className: "panel container",
+        responseopen: this.state.showResponse.toString()
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h3", null, "Submit a Request"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("small", {
         className: "form-note"
       }, this.props.data.note ? this.props.data.note : null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_api_form_js__WEBPACK_IMPORTED_MODULE_1__["default"], {
+        showResponsePanel: this.showResponsePanel,
         data: this.props.data
-      })));
+      })), this.state.showResponse ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "panel container response"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h3", null, "Response")) : null);
     }
   }]);
 

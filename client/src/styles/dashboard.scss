@@ -172,23 +172,55 @@ button, input[type=submit] {
 .modal {
     width: 100vw;
     height: 100vh;
-    background: rgba(0,0,0,.75);
+    background: rgba(0,0,0,.9);
     transition: 250ms ease-in-out;
     text-align: center;
     position: fixed;
-    z-index: 99;
+    z-index: 9999;
     top: 0;
     left: 0;
     .panel {
         width: 450px;
         height: 60%;
         position: absolute;
+        margin: 0 auto;
         left: 0;
         right: 0;
-        margin: 0 auto;
         top: 20%;
         animation: modalIn .25s ease;
         text-align: left;
+        display: inline-block;
+        vertical-align: top;
+        transition: 500ms ease;
+        &.response {
+            animation: fadeIn 1s ease;
+            transform: translateX(240px);
+            &:after {
+                content: "Waiting on Response...";
+                text-align: center;
+                width: 200px;
+                height: 200px;
+                background: url("/assets/loadinggif.gif");
+                filter: brightness(120%);
+                background-size: cover;
+                position: absolute;
+                top: 30%;
+                left: 0;
+                right: 0;
+                margin: 0 auto;
+                border: none;
+                box-shadow: none;
+                opacity: .4;
+            }
+            &.loaded {
+                &:after {
+                    display: none;
+                }
+            }
+        }
+        &[responseopen=true] {
+            transform: translateX(-240px);
+        }
     }
 }
 
@@ -323,5 +355,23 @@ button, input[type=submit] {
     }
     100% {
         transform: translateX(0);
+    }
+}
+
+@keyframes fadeIn {
+    0% {
+        opacity: .2;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+@keyframes slideLeft {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-500px);
     }
 }
