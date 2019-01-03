@@ -200,6 +200,7 @@ function (_Component) {
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _array_input_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./array-input.js */ "./client/src/js/components/array-input.js");
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -220,6 +221,7 @@ function _assertThisInitialized(self) { if (self === void 0) { throw new Referen
 
 
 
+
 var ApiForm =
 /*#__PURE__*/
 function (_Component) {
@@ -232,29 +234,67 @@ function (_Component) {
 
     _this = _possibleConstructorReturn(this, _getPrototypeOf(ApiForm).call(this, props));
     _this.handleSubmit = _this.handleSubmit.bind(_assertThisInitialized(_assertThisInitialized(_this)));
+    _this.handleFieldChange = _this.handleFieldChange.bind(_assertThisInitialized(_assertThisInitialized(_this)));
+    _this.state = {
+      form: {}
+    };
     return _this;
   }
 
   _createClass(ApiForm, [{
     key: "handleSubmit",
     value: function handleSubmit(e) {
+      var _this2 = this;
+
       event.preventDefault();
-      var data = new FormData(e.target);
-      console.log(data);
+      var formData = this.state.form;
+      this.props.showResponsePanel(true);
       fetch('/test', {
         method: 'POST',
-        body: data
-      }).then(function (response) {
-        return response.json();
-      }).then(function (response) {
-        console.log("FINISHED");
-        console.log(response);
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formData)
+      }).then(function (res) {
+        return res.json();
+      }).then(function (result) {
+        _this2.props.showResponseData(result);
+      }, function (error) {
+        _this2.props.showResponseData(error);
       });
       this.props.showResponsePanel(true);
     }
   }, {
+    key: "handleFieldChange",
+    value: function handleFieldChange(e) {
+      var field = e.target;
+      var form = this.state.form;
+
+      if (field.type == "checkbox") {
+        // handle boolean switches
+        if (field.value == "on") {
+          form[field.name] = true;
+        } else {
+          form[field.name] = false;
+        }
+      } else if (field.type == "array") {
+        // handle arrays
+        if (!form[field.parent]) {
+          form[field.parent] = [];
+        }
+
+        form[field.parent][field.key] = field.value;
+      } else {
+        form[field.name] = field.value;
+      }
+
+      this.setState(form);
+    }
+  }, {
     key: "render",
     value: function render() {
+      var _this3 = this;
+
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "formWrap"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("form", {
@@ -263,9 +303,30 @@ function (_Component) {
         return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
           key: element.prettyName
         }, element.prettyName, element.type == "string" || element.type == "int" ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+          name: element.name,
           placeholder: element.placeholder,
           type: "text",
-          required: element.required
+          required: element.required,
+          onChange: _this3.handleFieldChange
+        }) : null, element.type == "blob" ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("textarea", {
+          name: element.name,
+          placeholder: element.placeholder,
+          type: "text",
+          required: element.required,
+          onChange: _this3.handleFieldChange
+        }) : null, element.type == "bool" ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+          className: "switch"
+        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+          name: element.name,
+          onChange: _this3.handleFieldChange,
+          type: "checkbox"
+        }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
+          className: "slider round"
+        }))) : null, element.type == "array" ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_array_input_js__WEBPACK_IMPORTED_MODULE_1__["default"], {
+          name: element.name,
+          placeholder: element.placeholder,
+          required: element.required,
+          handlefieldchange: _this3.handleFieldChange
         }) : null);
       }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
         type: "submit",
@@ -335,20 +396,47 @@ function (_Component) {
 
     _this = _possibleConstructorReturn(this, _getPrototypeOf(ApiPanel).call(this, props));
     _this.showResponsePanel = _this.showResponsePanel.bind(_assertThisInitialized(_assertThisInitialized(_this)));
+    _this.showResponseData = _this.showResponseData.bind(_assertThisInitialized(_assertThisInitialized(_this)));
+    _this.nestedKeys = _this.nestedKeys.bind(_assertThisInitialized(_assertThisInitialized(_this)));
     _this.state = {
       showResponse: false,
-      response: null
+      response: null,
+      responseStatus: "Waiting for response..."
     };
     return _this;
   }
 
   _createClass(ApiPanel, [{
     key: "showResponsePanel",
-    value: function showResponsePanel(bool, response) {
+    value: function showResponsePanel(bool) {
       this.setState({
-        showResponse: bool,
+        showResponse: bool
+      });
+    }
+  }, {
+    key: "showResponseData",
+    value: function showResponseData(response) {
+      this.setState({
         response: response
       });
+    }
+  }, {
+    key: "nestedKeys",
+    value: function nestedKeys(json) {
+      var _this2 = this;
+
+      if (_typeof(json) == "object") {
+        var arr = Object.keys(json).sort();
+        return arr.map(function (key) {
+          if (_typeof(json[key]) == "object") {
+            return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("li", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", null, key, ": "), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("ul", null, _this2.nestedKeys(json[key])));
+          } else {
+            return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("li", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", null, key, ": "), _this2.nestedKeys(json[key]));
+          }
+        });
+      } else {
+        return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null, json.toString());
+      }
     }
   }, {
     key: "render",
@@ -361,11 +449,14 @@ function (_Component) {
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h3", null, "Submit a Request"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("small", {
         className: "form-note"
       }, this.props.data.note ? this.props.data.note : null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_api_form_js__WEBPACK_IMPORTED_MODULE_1__["default"], {
+        showResponseData: this.showResponseData,
         showResponsePanel: this.showResponsePanel,
         data: this.props.data
       })), this.state.showResponse ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
-        className: "panel container response"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h3", null, "Response")) : null);
+        className: "panel container response " + (this.state.response == null ? "" : "done")
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h3", null, "Response"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("ul", {
+        className: "responseData"
+      }, this.state.response != null ? this.nestedKeys(this.state.response) : null)) : null);
     }
   }]);
 
@@ -373,6 +464,111 @@ function (_Component) {
 }(react__WEBPACK_IMPORTED_MODULE_0__["Component"]);
 
 /* harmony default export */ __webpack_exports__["default"] = (ApiPanel);
+
+/***/ }),
+
+/***/ "./client/src/js/components/array-input.js":
+/*!*************************************************!*\
+  !*** ./client/src/js/components/array-input.js ***!
+  \*************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
+/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
+
+function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
+
+function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
+
+function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
+
+function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
+
+
+var ArrayInput =
+/*#__PURE__*/
+function (_Component) {
+  _inherits(ArrayInput, _Component);
+
+  function ArrayInput(props) {
+    var _this;
+
+    _classCallCheck(this, ArrayInput);
+
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(ArrayInput).call(this, props));
+    _this.handleAddArrayInput = _this.handleAddArrayInput.bind(_assertThisInitialized(_assertThisInitialized(_this)));
+    _this.handleChange = _this.handleChange.bind(_assertThisInitialized(_assertThisInitialized(_this)));
+    _this.state = {
+      children: []
+    };
+    return _this;
+  }
+
+  _createClass(ArrayInput, [{
+    key: "handleAddArrayInput",
+    value: function handleAddArrayInput() {
+      var arr = this.state.children;
+      arr.push("Add");
+      this.setState({
+        children: this.state.children
+      });
+      console.log(this.state.children.length);
+    }
+  }, {
+    key: "handleChange",
+    value: function handleChange(e) {
+      this.props.handlefieldchange(e);
+    }
+  }, {
+    key: "render",
+    value: function render() {
+      var _this2 = this;
+
+      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "arrayWrapper"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+        parent: this.props.name,
+        placeholder: this.props.placeholder,
+        type: "text",
+        required: this.props.required,
+        onChange: this.handleChange
+      }), this.state.children.map(function (element, index) {
+        return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+          className: "arrayInput",
+          key: index,
+          parent: _this2.props.name,
+          placeholder: _this2.props.placeholder,
+          type: "text",
+          required: _this2.props.required,
+          onChange: _this2.handleChange
+        });
+      }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+        type: "button",
+        className: "arrayAddBtn",
+        onClick: function onClick() {
+          return _this2.handleAddArrayInput();
+        }
+      }, "+"));
+    }
+  }]);
+
+  return ArrayInput;
+}(react__WEBPACK_IMPORTED_MODULE_0__["Component"]);
+
+/* harmony default export */ __webpack_exports__["default"] = (ArrayInput);
 
 /***/ }),
 
@@ -511,7 +707,14 @@ function (_Component) {
         onClick: function onClick() {
           return _this2.openPanel();
         }
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", null, this.props.data.type), " Request"), this.state.showPanel ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_api_panel_js__WEBPACK_IMPORTED_MODULE_2__["default"], this.props) : null);
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", null, this.props.data.type), " Request"), this.state.showPanel ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "apiPanelWrap"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_api_panel_js__WEBPACK_IMPORTED_MODULE_2__["default"], this.props), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+        className: "closeApiPanelBtn",
+        onClick: function onClick() {
+          return _this2.openPanel();
+        }
+      }, "Close")) : null);
     }
   }]);
 

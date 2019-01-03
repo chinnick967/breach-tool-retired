@@ -105,6 +105,30 @@ main {
                 position: absolute;
                 right: 0px;
                 top: -10px;
+                &.closeApiPanelBtn {
+                    top: 710px;
+                    left: 0;
+                    margin: 0 auto;
+                    z-index: 100;
+                    animation: slideUp 250ms ease-in-out;
+                    transform: scale(.6);
+                }
+                &.arrayAddBtn {
+                    width: 16px;
+                    height: 16px;
+                    line-height: 16px;
+                    border-radius: 50px;
+                    background: linear-gradient(-13deg,#d99d0e,#dec90d 90%) 50% no-repeat;
+                    padding: 0;
+                    top: 0px;
+                    position: relative;
+                    margin-top: 8px;
+                }
+            }
+            .arrayWrapper {
+                float: right;
+                width: 150px;
+                text-align: center;
             }
             .info {
                 width: 25px;
@@ -145,6 +169,35 @@ main {
                 }
             }
         }
+        &.responseData {
+            height: 100%;
+            overflow-y: scroll;
+            overflow-x: hidden;
+            font-size: 14px;
+            strong {
+                color: #dec90d;
+            }
+            li {
+                padding-bottom: 10px;
+                margin-bottom: 10px;
+            }
+            ul {
+                padding-top: 5px;
+                padding-bottom: 0px;
+                margin-bottom: 0px;
+                max-height: 150px;
+                overflow-y: scroll;
+                overflow-x: hidden;
+                li {
+                    padding-bottom: 0;
+                    padding-left: 20px;
+                    margin-bottom: 5px;
+                    &:before {
+                        display: none;
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -167,6 +220,10 @@ button, input[type=submit] {
     strong {
         font-weight: normal;
     }
+    &.red {
+        background: linear-gradient(-13deg,#AA3939,#801515 90%) 50% no-repeat;
+        box-shadow: none;
+    }
 }
 
 .modal {
@@ -176,7 +233,7 @@ button, input[type=submit] {
     transition: 250ms ease-in-out;
     text-align: center;
     position: fixed;
-    z-index: 9999;
+    z-index: 99;
     top: 0;
     left: 0;
     .panel {
@@ -186,7 +243,7 @@ button, input[type=submit] {
         margin: 0 auto;
         left: 0;
         right: 0;
-        top: 20%;
+        top: 150px;
         animation: modalIn .25s ease;
         text-align: left;
         display: inline-block;
@@ -212,6 +269,9 @@ button, input[type=submit] {
                 box-shadow: none;
                 opacity: .4;
             }
+            &.done:after {
+              display: none;  
+            }
             &.loaded {
                 &:after {
                     display: none;
@@ -229,9 +289,9 @@ button, input[type=submit] {
     width: 100%;
     display: block;
     text-align: center;
-    padding: 5px 0;
+    padding: 10px 0;
     color: #dec90d;
-    margin-top: 20px;
+    margin-top: 10px;
 }
 
 .formWrap {
@@ -295,12 +355,14 @@ button, input[type=submit] {
         overflow-y: scroll;
     }
     label {
-        margin: 20px 0;
-        display: block;
+        margin: 8px 0;
+        display: inline-block;
+        width: 100%;
         z-index: 4;
         font-size: 14px;
+        position: relative;
     }
-    input {
+    input, textarea {
         background: white;
         border: gray;
         width: 150px;
@@ -332,6 +394,19 @@ button, input[type=submit] {
         &[required] {
             box-shadow: inset 0px 0px 5px 0px red;
         }
+        &.arrayInput {
+            margin-top: 3px;
+        }
+    }
+    textarea {
+        width: 350px;
+        height: 80px;
+        margin-top: 10px;
+        margin-bottom: 10px;
+        display: block;
+        resize: none;
+        text-align: left;
+        padding: 10px;
     }
     .key {
         position: absolute;
@@ -348,6 +423,80 @@ button, input[type=submit] {
         }
     }
 }
+
+.apiPanelWrap {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 99;
+}
+
+/* The switch - the box around the slider */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+    float: right;
+    margin-top: -20px;
+  }
+  
+  /* Hide default HTML checkbox */
+  .switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+  
+  /* The slider */
+  .slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    -webkit-transition: .4s;
+    transition: .4s;
+  }
+  
+  .slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    -webkit-transition: .4s;
+    transition: .4s;
+  }
+  
+  input:checked + .slider {
+    background-color: #2196F3;
+  }
+  
+  input:focus + .slider {
+    box-shadow: 0 0 1px #2196F3;
+  }
+  
+  input:checked + .slider:before {
+    -webkit-transform: translateX(26px);
+    -ms-transform: translateX(26px);
+    transform: translateX(26px);
+  }
+  
+  /* Rounded sliders */
+  .slider.round {
+    border-radius: 34px;
+  }
+  
+  .slider.round:before {
+    border-radius: 50%;
+  }
 
 @keyframes modalIn {
     0% {
@@ -373,5 +522,14 @@ button, input[type=submit] {
     }
     100% {
         transform: translateX(-500px);
+    }
+}
+
+@keyframes slideUp {
+    0% {
+        transform: translateY(300px) scale(.6);
+    }
+    100% {
+        transform: translateY(0px) scale(.6);
     }
 }

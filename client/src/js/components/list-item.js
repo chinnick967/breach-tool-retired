@@ -21,7 +21,7 @@ class ListItem extends Component{
         <li>
             <InfoBtn description={this.props.data.description}></InfoBtn> {this.props.data.name} 
             <button onClick={() => this.openPanel()}><strong>{this.props.data.type}</strong> Request</button>
-            { this.state.showPanel ? <ApiPanel {...this.props} /> : null }
+            { this.state.showPanel ? <div className="apiPanelWrap"><ApiPanel {...this.props} /><button className="closeApiPanelBtn" onClick={() => this.openPanel()}>Close</button></div> : null }
         </li>
       );
    }

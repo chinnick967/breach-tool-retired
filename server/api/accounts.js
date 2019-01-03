@@ -41,7 +41,8 @@ exports.apiList = {
         description: "Ban a user's account",
         type: "POST",
         uri: "/api/cs/ban",
-        paremeters: [
+        note: "Only one field needs to be completed for submission",
+        parameters: [
             {
                 name: "CSAgentId",
                 prettyName: "CS Agent ID",
@@ -61,13 +62,13 @@ exports.apiList = {
                 prettyName: "Ban Duration",
                 type: "string",
                 placeholder: "P1DT12H",
-                optional: false
+                required: false
             },
             {
                 name: "Memo",
                 prettyName: "Ban Memo",
                 placeholder: "This person is mean and said 'nuggets are sooo 2017' to coolguy#8445 at 10:45pm",
-                type: "string",
+                type: "blob",
                 required: true
             },
             {

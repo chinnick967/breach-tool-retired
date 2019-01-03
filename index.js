@@ -2,6 +2,12 @@ import express from 'express';
 const app = express();
 import path from 'path';
 
+var bodyParser = require('body-parser');
+app.use(bodyParser.urlencoded({
+    extended: true
+}));
+app.use(bodyParser.json());
+
 /* Breach API URL */
 const url = "";
 
@@ -33,8 +39,11 @@ app.get('/lists', (req, res) => {
     res.send(JSON.stringify(Lists));
 });
 
-app.get('/test', (req, res) => {
-    res.send(JSON.stringify({test: "test"}))
+/* API response imports */
+import apiResponse from './server/api-response/response.js';
+
+app.post('/test', (req, res) => {
+    res.send(apiResponse.fakeResponse(req.body));
 });
 
 app.listen(8000, ()=> console.log('App listening on port 8000'));

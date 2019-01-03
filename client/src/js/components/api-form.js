@@ -1,26 +1,57 @@
 import React, { Component } from 'react';
+import ArrayInput from './array-input.js';
 
 class ApiForm extends Component{
 
     constructor(props) {
         super(props);
         this.handleSubmit = this.handleSubmit.bind(this);
+        this.handleFieldChange = this.handleFieldChange.bind(this);
+
+        this.state = {
+            form: {}
+        }
     }
 
     handleSubmit(e) {
         event.preventDefault();
-        const data = new FormData(e.target);
-        console.log(data);
+        var formData = this.state.form;
+        this.props.showResponsePanel(true);
         fetch('/test', {
             method: 'POST',
-            body: data,
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(formData),
         })
-        .then((response) => response.json())
-        .then((response) => {
-            console.log("FINISHED");
-            console.log(response);
-        });
+        .then(res => res.json())
+         .then(
+            (result) => {
+                this.props.showResponseData(result);
+            },
+            (error) => {
+                this.props.showResponseData(error);
+            }
+         )
         this.props.showResponsePanel(true);
+    }
+
+    handleFieldChange(e) {
+        var field = e.target;
+        var form = this.state.form;
+        if (field.type == "checkbox") { // handle boolean switches
+            if (field.value == "on") {
+                form[field.name] = true;
+            } else {
+                form[field.name] = false;
+            }
+        } else if (field.type == "array") { // handle arrays
+            if (!form[field.parent]) {
+                form[field.parent] = [];
+            }
+            form[field.parent][field.key] = field.value;
+        } else {
+            form[field.name] = field.value;
+        }
+        this.setState(form);
     }
 
    render(){
@@ -31,7 +62,16 @@ class ApiForm extends Component{
                     <label key={element.prettyName}>
                         {element.prettyName}
                         {element.type == "string" || element.type == "int" ?
-                            <input placeholder={element.placeholder} type="text" required={element.required} /> : null
+                            <input name={element.name} placeholder={element.placeholder} type="text" required={element.required} onChange={this.handleFieldChange} /> : null
+                        }
+                        {element.type == "blob" ?
+                            <textarea name={element.name} placeholder={element.placeholder} type="text" required={element.required} onChange={this.handleFieldChange} /> : null
+                        }
+                        {element.type == "bool" ?
+                            <div><div className="switch"><input name={element.name} onChange={this.handleFieldChange} type="checkbox" /><span className="slider round"></span></div></div> : null
+                        }
+                        {element.type == "array" ?
+                            <ArrayInput name={element.name} placeholder={element.placeholder} required={element.required} handlefieldchange={this.handleFieldChange} /> : null
                         }
                     </label>
                 ))}
