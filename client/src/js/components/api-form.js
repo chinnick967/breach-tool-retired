@@ -66,7 +66,7 @@ class ApiForm extends Component{
             <form onSubmit={this.handleSubmit}>
                 {this.props.data.parameters.map(element => (
                     <label key={element.prettyName}>
-                        {element.prettyName}
+                        <span required={element.required}>{element.prettyName}</span>
                         {element.type == "string" || element.type == "int" ?
                             <input name={element.name} placeholder={element.placeholder} type="text" required={element.required} onChange={this.handleFieldChange} /> : null
                         }

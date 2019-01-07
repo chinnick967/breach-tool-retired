@@ -349,10 +349,11 @@ button, input[type=submit] {
         border-bottom: dashed 1px #68686e;
     }
     form {
-        height: 75%;
+        height: 85%;
         width: 100%;
         overflow-x: hidden;
         overflow-y: scroll;
+        padding-right: 20px;
     }
     label {
         margin: 8px 0;
@@ -361,16 +362,26 @@ button, input[type=submit] {
         z-index: 4;
         font-size: 14px;
         position: relative;
+        span {
+            &[required] {
+                &:after {
+                    content: "*";
+                    color: red;
+                    margin-left: 4px;
+                }
+            }
+        }
     }
     input, textarea {
         background: white;
         border: gray;
         width: 150px;
-        height: 20px;
+        height: 25px;
         float: right;
         text-align: center;
         z-index: 4;
-        box-shadow: inset 0px 0px 5px 0px #639833;
+        //box-shadow: inset 0px 0px 5px 0px #639833;
+        box-shadow: inset 0px 0px 5px 0px #000;
         position: relative;
         &[type=submit] {
             position: absolute;
@@ -392,7 +403,7 @@ button, input[type=submit] {
             height: auto;
         }
         &[required] {
-            box-shadow: inset 0px 0px 5px 0px red;
+            //box-shadow: inset 0px 0px 5px 0px red;
         }
         &.arrayInput {
             margin-top: 3px;
@@ -415,6 +426,7 @@ button, input[type=submit] {
         bottom: 15px;
         font-size: 10px;
         right: 15px;
+        display: none;
         input {
             width: 100px;
             float: none;

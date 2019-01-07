@@ -309,7 +309,9 @@ function (_Component) {
       }, this.props.data.parameters.map(function (element) {
         return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
           key: element.prettyName
-        }, element.prettyName, element.type == "string" || element.type == "int" ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
+          required: element.required
+        }, element.prettyName), element.type == "string" || element.type == "int" ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
           name: element.name,
           placeholder: element.placeholder,
           type: "text",

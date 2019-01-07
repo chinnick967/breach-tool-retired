@@ -4,7 +4,7 @@
   "description": "Breach API Tool",
   "main": "index.js",
   "scripts": {
-    "start-dev": "concurrently \"NODE_ENV=development \" \"npm run init-node\" \" npm run webpack \"",
+    "start-dev": "concurrently \"sudo killall node\" \"NODE_ENV=development \" \"npm run init-node\" \" npm run webpack \"",
     "start-production": "NODE_ENV=production npm run init-node",
     "init-node": "nodemon --exec babel-node index.js",
     "webpack": "webpack --mode=development --watch"

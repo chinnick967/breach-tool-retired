@@ -41,7 +41,7 @@ exports.apiList = {
         description: "Ban a user's account",
         type: "POST",
         uri: "/api/cs/ban",
-        note: "Only one field needs to be completed for submission",
+        note: "This will ban the user from all Breach services",
         parameters: [
             {
                 name: "CSAgentId",
