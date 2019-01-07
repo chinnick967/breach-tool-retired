@@ -43,15 +43,21 @@ class ApiForm extends Component{
             } else {
                 form[field.name] = false;
             }
-        } else if (field.type == "array") { // handle arrays
-            if (!form[field.parent]) {
-                form[field.parent] = [];
+        } else if (field.getAttribute('array')) { // handle arrays
+            var parent = field.getAttribute('parent');
+            var key = field.getAttribute('arrayid');
+            if (!form[parent]) {
+                console.log("test");
+                console.log(parent);
+                form[parent] = [];
             }
-            form[field.parent][field.key] = field.value;
+            form[parent][key] = field.value;
         } else {
+            console.log("not array");
             form[field.name] = field.value;
         }
         this.setState(form);
+        console.log(form);
     }
 
    render(){
@@ -71,7 +77,7 @@ class ApiForm extends Component{
                             <div><div className="switch"><input name={element.name} onChange={this.handleFieldChange} type="checkbox" /><span className="slider round"></span></div></div> : null
                         }
                         {element.type == "array" ?
-                            <ArrayInput name={element.name} placeholder={element.placeholder} required={element.required} handlefieldchange={this.handleFieldChange} /> : null
+                            <ArrayInput parent={element.name} name={element.name} array={"true"} placeholder={element.placeholder} required={element.required} handlefieldchange={this.handleFieldChange} /> : null
                         }
                     </label>
                 ))}

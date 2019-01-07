@@ -277,18 +277,25 @@ function (_Component) {
         } else {
           form[field.name] = false;
         }
-      } else if (field.type == "array") {
+      } else if (field.getAttribute('array')) {
         // handle arrays
-        if (!form[field.parent]) {
-          form[field.parent] = [];
+        var parent = field.getAttribute('parent');
+        var key = field.getAttribute('arrayid');
+
+        if (!form[parent]) {
+          console.log("test");
+          console.log(parent);
+          form[parent] = [];
         }
 
-        form[field.parent][field.key] = field.value;
+        form[parent][key] = field.value;
       } else {
+        console.log("not array");
         form[field.name] = field.value;
       }
 
       this.setState(form);
+      console.log(form);
     }
   }, {
     key: "render",
@@ -323,7 +330,9 @@ function (_Component) {
         }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
           className: "slider round"
         }))) : null, element.type == "array" ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_array_input_js__WEBPACK_IMPORTED_MODULE_1__["default"], {
+          parent: element.name,
           name: element.name,
+          array: "true",
           placeholder: element.placeholder,
           required: element.required,
           handlefieldchange: _this3.handleFieldChange
@@ -540,6 +549,9 @@ function (_Component) {
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "arrayWrapper"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+        key: 0,
+        array: "true",
+        arrayid: 0,
         parent: this.props.name,
         placeholder: this.props.placeholder,
         type: "text",
@@ -548,7 +560,9 @@ function (_Component) {
       }), this.state.children.map(function (element, index) {
         return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
           className: "arrayInput",
-          key: index,
+          array: "true",
+          key: index + 1,
+          arrayid: index + 1,
           parent: _this2.props.name,
           placeholder: _this2.props.placeholder,
           type: "text",
@@ -28223,15 +28237,16 @@ module.exports = g;
 /***/ }),
 
 /***/ 0:
-/*!*************************************************************************************************************************************************************************************************************************************************************!*\
-  !*** multi ./client/src/js/App.js ./client/src/js/components/api-form.js ./client/src/js/components/api-panel.js ./client/src/js/components/info-btn.js ./client/src/js/components/list-item.js ./client/src/js/components/list.js ./client/src/js/main.js ***!
-  \*************************************************************************************************************************************************************************************************************************************************************/
+/*!*******************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** multi ./client/src/js/App.js ./client/src/js/components/api-form.js ./client/src/js/components/api-panel.js ./client/src/js/components/array-input.js ./client/src/js/components/info-btn.js ./client/src/js/components/list-item.js ./client/src/js/components/list.js ./client/src/js/main.js ***!
+  \*******************************************************************************************************************************************************************************************************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
 __webpack_require__(/*! ./client/src/js/App.js */"./client/src/js/App.js");
 __webpack_require__(/*! ./client/src/js/components/api-form.js */"./client/src/js/components/api-form.js");
 __webpack_require__(/*! ./client/src/js/components/api-panel.js */"./client/src/js/components/api-panel.js");
+__webpack_require__(/*! ./client/src/js/components/array-input.js */"./client/src/js/components/array-input.js");
 __webpack_require__(/*! ./client/src/js/components/info-btn.js */"./client/src/js/components/info-btn.js");
 __webpack_require__(/*! ./client/src/js/components/list-item.js */"./client/src/js/components/list-item.js");
 __webpack_require__(/*! ./client/src/js/components/list.js */"./client/src/js/components/list.js");
