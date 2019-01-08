@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 
 import List from './components/list.js';
+import Tools from './components/tools.js';
 
 class App extends Component{
    constructor(props) {
@@ -42,6 +43,7 @@ class App extends Component{
             <div>
                <div className="header">
                   <h1>Breach Admin API Tool</h1>
+                  <Tools />
                </div>
                <main>
                   {Object.keys(lists).map(key => (
