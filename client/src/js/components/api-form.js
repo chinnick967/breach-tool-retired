@@ -47,17 +47,13 @@ class ApiForm extends Component{
             var parent = field.getAttribute('parent');
             var key = field.getAttribute('arrayid');
             if (!form[parent]) {
-                console.log("test");
-                console.log(parent);
                 form[parent] = [];
             }
             form[parent][key] = field.value;
         } else {
-            console.log("not array");
             form[field.name] = field.value;
         }
         this.setState(form);
-        console.log(form);
     }
 
    render(){
@@ -74,7 +70,7 @@ class ApiForm extends Component{
                             <textarea name={element.name} placeholder={element.placeholder} type="text" required={element.required} onChange={this.handleFieldChange} /> : null
                         }
                         {element.type == "bool" ?
-                            <div><div className="switch"><input name={element.name} onChange={this.handleFieldChange} type="checkbox" /><span className="slider round"></span></div></div> : null
+                            <div><div className="switch"><input name={element.name} onChange={this.handleFieldChange} type="checkbox" checked /><span className="slider round"></span></div></div> : null
                         }
                         {element.type == "array" ?
                             <ArrayInput parent={element.name} name={element.name} array={"true"} placeholder={element.placeholder} required={element.required} handlefieldchange={this.handleFieldChange} /> : null
