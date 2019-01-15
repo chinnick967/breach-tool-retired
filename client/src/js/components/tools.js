@@ -13,8 +13,10 @@ class Tools extends Component{
         }
     }
 
-    toggleTools() {
-        this.state.closed ? this.setState({closed: false}) : this.setState({closed: true})
+    toggleTools(e) {
+        if (e.target.classList.contains("tools")) {
+            this.state.closed ? this.setState({closed: false}) : this.setState({closed: true})
+        }
     }
 
    render() {

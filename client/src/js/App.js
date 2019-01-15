@@ -71,6 +71,7 @@ class App extends Component{
                      ))}
                   </main>
                   <Tools />
+                  <div id="toolModal"></div>
                </div>
             );
          }

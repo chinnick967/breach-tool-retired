@@ -211,7 +211,9 @@ function (_Component) {
               key: key,
               data: lists[key]
             });
-          })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_tools_js__WEBPACK_IMPORTED_MODULE_2__["default"], null));
+          })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_tools_js__WEBPACK_IMPORTED_MODULE_2__["default"], null), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+            id: "toolModal"
+          }));
         }
       } else if (sessionChecked) {
         return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_components_signin_js__WEBPACK_IMPORTED_MODULE_3__["default"], {
@@ -365,8 +367,7 @@ function (_Component) {
         }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
           name: element.name,
           onChange: _this3.handleFieldChange,
-          type: "checkbox",
-          checked: true
+          type: "checkbox"
         }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
           className: "slider round"
         }))) : null, element.type == "array" ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_array_input_js__WEBPACK_IMPORTED_MODULE_1__["default"], {
@@ -1015,12 +1016,14 @@ function (_Component) {
 
   _createClass(Tools, [{
     key: "toggleTools",
-    value: function toggleTools() {
-      this.state.closed ? this.setState({
-        closed: false
-      }) : this.setState({
-        closed: true
-      });
+    value: function toggleTools(e) {
+      if (e.target.classList.contains("tools")) {
+        this.state.closed ? this.setState({
+          closed: false
+        }) : this.setState({
+          closed: true
+        });
+      }
     }
   }, {
     key: "render",
@@ -1050,6 +1053,8 @@ function (_Component) {
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ "./node_modules/react/index.js");
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react-dom */ "./node_modules/react-dom/index.js");
+/* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react_dom__WEBPACK_IMPORTED_MODULE_1__);
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -1060,13 +1065,14 @@ function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _d
 
 function _possibleConstructorReturn(self, call) { if (call && (_typeof(call) === "object" || typeof call === "function")) { return call; } return _assertThisInitialized(self); }
 
-function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
-
 function _getPrototypeOf(o) { _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) { return o.__proto__ || Object.getPrototypeOf(o); }; return _getPrototypeOf(o); }
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function"); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, writable: true, configurable: true } }); if (superClass) _setPrototypeOf(subClass, superClass); }
 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
+
+function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
 
 
 
@@ -1081,16 +1087,152 @@ function (_Component) {
     _classCallCheck(this, AccountTool);
 
     _this = _possibleConstructorReturn(this, _getPrototypeOf(AccountTool).call(this, props));
-    _this.state = {};
+    _this.toggleAccountModal = _this.toggleAccountModal.bind(_assertThisInitialized(_assertThisInitialized(_this)));
+    _this.renderAccountModal = _this.renderAccountModal.bind(_assertThisInitialized(_assertThisInitialized(_this)));
+    _this.fieldChange = _this.fieldChange.bind(_assertThisInitialized(_assertThisInitialized(_this)));
+    _this.state = {
+      open: false,
+      current: "default",
+      form: {}
+    };
     return _this;
   }
 
   _createClass(AccountTool, [{
+    key: "componentDidMount",
+    value: function componentDidMount() {
+      console.log("account mounted");
+    }
+  }, {
+    key: "toggleAccountModal",
+    value: function toggleAccountModal(bool) {
+      this.setState({
+        open: bool
+      });
+    }
+  }, {
+    key: "changeModalState",
+    value: function changeModalState(state) {
+      this.setState({
+        current: state
+      });
+    }
+  }, {
+    key: "fieldChange",
+    value: function fieldChange(e) {
+      var field = e.target;
+      var form = this.state.form;
+
+      if (field.type == "checkbox") {
+        // handle boolean switches
+        if (field.value == "on") {
+          form[field.name] = true;
+        } else {
+          form[field.name] = false;
+        }
+      } else {
+        form[field.name] = field.value;
+      }
+
+      this.setState(form);
+      console.log(this.state.form);
+    }
+  }, {
+    key: "renderAccountModal",
+    value: function renderAccountModal() {
+      var _this2 = this;
+
+      var jsx;
+
+      if (this.state.current == "default") {
+        jsx = react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+          className: "overlay"
+        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+          className: "container account modal"
+        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h1", null, "Accounts"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("table", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("thead", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, "Name"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, "Activity"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, "Priveledges"))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tbody", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, "Rawrcat"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", null, "Activity")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", null, "Priveledges"))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, "Rawrcat"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", null, "Activity")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", null, "Priveledges"))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, "Rawrcat"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", null, "Activity")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", null, "Priveledges"))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, "Rawrcat"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", null, "Activity")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", null, "Priveledges"))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, "Rawrcat"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", null, "Activity")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", null, "Priveledges"))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, "Rawrcat"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", null, "Activity")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", null, "Priveledges"))))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+          className: "createAccountBtn",
+          onClick: function onClick() {
+            return _this2.changeModalState("create");
+          }
+        }, "Create"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+          className: "closeToolModalBtn",
+          onClick: function onClick() {
+            return _this2.toggleAccountModal(false);
+          }
+        }, "Close")));
+      } else if (this.state.current == "create") {
+        jsx = react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+          className: "overlay"
+        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+          className: "container account modal"
+        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h1", null, "Create Account"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("form", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+          type: "text",
+          name: "Email",
+          placeholder: "Email",
+          onChange: this.fieldChange
+        }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+          type: "password",
+          name: "Password",
+          placeholder: "Password",
+          onChange: this.fieldChange
+        }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h2", null, "Priveledges"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+          className: "switchField"
+        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null, "Find Game Data:"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+          className: "switch"
+        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+          name: "find",
+          type: "checkbox",
+          onChange: this.fieldChange
+        }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
+          className: "slider round"
+        }))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+          className: "switchField"
+        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null, "Edit Game Data:"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+          className: "switch"
+        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+          name: "edit",
+          type: "checkbox",
+          onChange: this.fieldChange
+        }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
+          className: "slider round"
+        }))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+          className: "switchField"
+        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null, "Tool Administrator:"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+          className: "switch"
+        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+          name: "admin",
+          type: "checkbox",
+          onChange: this.fieldChange
+        }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
+          className: "slider round"
+        }))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+          type: "submit"
+        }, "Create")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+          className: "backBtn",
+          onClick: function onClick() {
+            return _this2.changeModalState("default");
+          }
+        }, "Back"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+          className: "closeToolModalBtn",
+          onClick: function onClick() {
+            return _this2.toggleAccountModal(false);
+          }
+        }, "Close")));
+      }
+
+      return react_dom__WEBPACK_IMPORTED_MODULE_1___default.a.createPortal(jsx, document.querySelector("#toolModal"));
+    }
+  }, {
     key: "render",
     value: function render() {
-      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
-        className: "tool account"
-      });
+      var _this3 = this;
+
+      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, this.state.open == false ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
+        className: "tool account",
+        onClick: function onClick() {
+          return _this3.toggleAccountModal(true);
+        }
+      }) : this.renderAccountModal());
     }
   }]);
 
@@ -28674,9 +28816,9 @@ module.exports = g;
 /***/ }),
 
 /***/ 0:
-/*!****************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
-  !*** multi ./client/src/js/App.js ./client/src/js/components/api-form.js ./client/src/js/components/api-panel.js ./client/src/js/components/array-input.js ./client/src/js/components/info-btn.js ./client/src/js/components/list-item.js ./client/src/js/components/list.js ./client/src/js/components/signin.js ./client/src/js/components/tools.js ./client/src/js/components/tools/logtool.js ./client/src/js/main.js ***!
-  \****************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
+/*!***************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************!*\
+  !*** multi ./client/src/js/App.js ./client/src/js/components/api-form.js ./client/src/js/components/api-panel.js ./client/src/js/components/array-input.js ./client/src/js/components/info-btn.js ./client/src/js/components/list-item.js ./client/src/js/components/list.js ./client/src/js/components/signin.js ./client/src/js/components/tools.js ./client/src/js/components/tools/accounttool.js ./client/src/js/components/tools/logouttool.js ./client/src/js/components/tools/logtool.js ./client/src/js/main.js ***!
+  \***************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************************/
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -28689,6 +28831,8 @@ __webpack_require__(/*! ./client/src/js/components/list-item.js */"./client/src/
 __webpack_require__(/*! ./client/src/js/components/list.js */"./client/src/js/components/list.js");
 __webpack_require__(/*! ./client/src/js/components/signin.js */"./client/src/js/components/signin.js");
 __webpack_require__(/*! ./client/src/js/components/tools.js */"./client/src/js/components/tools.js");
+__webpack_require__(/*! ./client/src/js/components/tools/accounttool.js */"./client/src/js/components/tools/accounttool.js");
+__webpack_require__(/*! ./client/src/js/components/tools/logouttool.js */"./client/src/js/components/tools/logouttool.js");
 __webpack_require__(/*! ./client/src/js/components/tools/logtool.js */"./client/src/js/components/tools/logtool.js");
 module.exports = __webpack_require__(/*! ./client/src/js/main.js */"./client/src/js/main.js");
 
