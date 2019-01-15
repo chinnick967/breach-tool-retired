@@ -6,6 +6,7 @@
   "scripts": {
     "start-dev": "concurrently \"sudo killall node\" \" mongod \" \"nodemon --exec NODE_ENV=development babel-node index.js\" \" npm run webpack \"",
     "start-production": "nodemon --exec NODE_ENV=production babel-node index.js",
+    "start-docker": "babel-node index.js",
     "webpack": "webpack --mode=development --watch"
   },
   "repository": {
