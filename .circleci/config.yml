@@ -1,0 +1,64 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/node:8
+    steps:
+      - run:
+          command: |
+            echo $CIRCLE_SHA1
+  dockerize:
+    docker:
+      - image: docker:17.05.0-ce-git
+    steps:
+      - checkout
+      - setup_remote_docker:
+          docker_layer_caching: true
+      - run:
+          name: Login into ACR
+          command: |
+            docker login --username $DOCKER_USERNAME --password $DOCKER_PASSWORD emeqcgames.azurecr.io
+      - run:
+          name: Build application image
+          shell: /bin/sh -ex
+          command: (docker pull emeqcgames.azurecr.io/breach-cs-site:latest || true) && docker/build.sh && docker images
+      - run:
+          name: Push built Docker image
+          shell: /bin/sh -ex
+          command: |
+            [ "$CIRCLE_PROJECT_USERNAME" != "enmasse-entertainment" ] && exit 0 || true
+
+            HEAD_SHA1=$(git rev-parse HEAD|awk '{print substr($0, 0, 8)}')
+
+            docker push emeqcgames.azurecr.io/breach-cs-site:$HEAD_SHA1
+            [ -z "$SKIP_DOCKER_LATEST_IMAGE" ] && (docker tag emeqcgames.azurecr.io/breach-cs-site:$HEAD_SHA1 emeqcgames.azurecr.io/breach-cs-site:latest && docker push emeqcgames.azurecr.io/breach-cs-site:latest) || true
+  deploy-edge:
+    docker:
+      - image: enmasseentertainment/kubectl:1.12.2.0
+    steps:
+      - run:
+          name: Update deployment
+          command: |
+            [ "$CIRCLE_PROJECT_USERNAME" != "enmasse-entertainment" ] && exit 0 || true
+
+            envsubst < ~/.kube/config.template > ~/.kube/config \
+              && kubectl config use-context default-context \
+              && printf '{"spec":{"template":{"metadata":{"labels":{"date":"%s"}}}}}' `date +%s` | xargs -0 kubectl patch deployment breach-cs-site-edge -p
+workflows:
+  version: 2
+  build-deploy:
+    jobs:
+      - dockerize:
+          context: docker-build
+          filters:
+            branches:
+              only:
+                - master
+      - deploy-edge:
+          context: k8s-qc-ams-dev
+          requires:
+            - dockerize
+          filters:
+            branches:
+              only:
+                - master
