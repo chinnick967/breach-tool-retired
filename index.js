@@ -91,4 +91,9 @@ app.get('/clear-session', (req, res) => {
     }
 });
 
+/* endpoint for health check from load balancer */
+app.get('/health', (req, res) => {
+    res.send('');
+});
+
 app.listen(8000, ()=> console.log('App listening on port 8000'));
