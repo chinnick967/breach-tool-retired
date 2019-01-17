@@ -3,7 +3,6 @@ const app = express();
 import path from 'path';
 
 var session = require('express-session');
-var db = require('./server/db/connect.js');
 
 var bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({
@@ -69,6 +68,21 @@ app.post('/sign-in', (req, res) => {
         } else {
             res.send(JSON.stringify({error: true, message: "Incorrect login information. Please try again"}));
         }
+    });
+});
+
+app.post('/create-account', (req, res) => {
+    var user = {
+        email: req.body.Email,
+        password: req.body.Password,
+        find: req.body.find,
+        edit: req.body.edit,
+        admin: req.body.admin,
+        createdAt: new Date()
+    }
+    console.log(user);
+    users.createUser(user, function(result) {
+        res.send(result);
     });
 });
 
