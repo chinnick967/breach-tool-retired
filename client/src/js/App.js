@@ -43,11 +43,10 @@ class App extends Component{
          .then(res => res.json())
          .then(
             (result) => {
-               console.log(result);
                result.error ? this.setState({sessionChecked: true, user: false}) : this.setState({sessionChecked: true, user: result})
             },
             (error) => {
-               console.log("session error");
+               console.log("Session error");
             }
          )
    }
@@ -67,10 +66,10 @@ class App extends Component{
                   </div>
                   <main>
                      {Object.keys(lists).map(key => (
-                        <List key={key} data={lists[key]}></List>
+                        <List user={user} key={key} data={lists[key]}></List>
                      ))}
                   </main>
-                  <Tools />
+                  <Tools user={user} />
                   <div id="toolModal"></div>
                </div>
             );

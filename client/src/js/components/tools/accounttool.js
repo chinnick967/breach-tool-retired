@@ -7,10 +7,15 @@ class AccountTool extends Component{
         this.toggleAccountModal = this.toggleAccountModal.bind(this);
         this.renderAccountModal = this.renderAccountModal.bind(this);
         this.fieldChange = this.fieldChange.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
         this.state = {
             open: false,
             current: "default",
-            form: {}
+            form: {
+                find: false,
+                edit: false,
+                admin: false
+            }
         }
     }
 
@@ -39,7 +44,26 @@ class AccountTool extends Component{
             form[field.name] = field.value;
         }
         this.setState(form);
-        console.log(this.state.form);
+    }
+
+    handleSubmit(e) {
+        event.preventDefault();
+        var formData = this.state.form;
+        fetch('/create-account', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(formData),
+        })
+        .then(res => res.json())
+        .then(
+            (result) => {
+                this.changeModalState("default");
+                alert(result.message);
+            },
+            (error) => {
+                alert(error);
+            }
+        )
     }
 
     renderAccountModal() {
@@ -72,7 +96,7 @@ class AccountTool extends Component{
                 <div className="overlay">
                     <div className="container account modal">
                         <h1>Create Account</h1>
-                        <form>
+                        <form onSubmit={this.handleSubmit}>
                             <input type="text" name="Email" placeholder="Email" onChange={this.fieldChange} />
                             <input type="password" name="Password" placeholder="Password" onChange={this.fieldChange} />
                             <h2>Priveledges</h2>

@@ -3,7 +3,6 @@ const app = express();
 import path from 'path';
 
 var session = require('express-session');
-var db = require('./server/db/connect.js');
 
 var bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({
@@ -72,6 +71,21 @@ app.post('/sign-in', (req, res) => {
     });
 });
 
+app.post('/create-account', (req, res) => {
+    var user = {
+        email: req.body.Email,
+        password: req.body.Password,
+        find: req.body.find,
+        edit: req.body.edit,
+        admin: req.body.admin,
+        createdAt: new Date()
+    }
+    console.log(user);
+    users.createUser(user, function(result) {
+        res.send(result);
+    });
+});
+
 app.get('/check-session', (req, res) => {
     if (req.session.user) {
         req.session.user = req.session.user; // refresh session
@@ -89,6 +103,11 @@ app.get('/clear-session', (req, res) => {
     } else {
         res.send(JSON.stringify({error: true, message: "Session doesn't exist"}));
     }
+});
+
+/* endpoint for health check from load balancer */
+app.get('/health', (req, res) => {
+    res.send('');
 });
 
 app.listen(8000, ()=> console.log('App listening on port 8000'));
