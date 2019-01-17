@@ -51,15 +51,15 @@ class AccountTool extends Component{
                         <h1>Accounts</h1>
                         <table>
                             <thead>
-                                <tr><th>Name</th><th>Activity</th><th>Priveledges</th></tr>
+                                <tr><th>Name</th><th>Activity</th><th>Privileges</th></tr>
                             </thead>
                             <tbody>
-                                <tr><td>Rawrcat</td><td><button>Activity</button></td><td><button>Priveledges</button></td></tr>
-                                <tr><td>Rawrcat</td><td><button>Activity</button></td><td><button>Priveledges</button></td></tr>
-                                <tr><td>Rawrcat</td><td><button>Activity</button></td><td><button>Priveledges</button></td></tr>
-                                <tr><td>Rawrcat</td><td><button>Activity</button></td><td><button>Priveledges</button></td></tr>
-                                <tr><td>Rawrcat</td><td><button>Activity</button></td><td><button>Priveledges</button></td></tr>
-                                <tr><td>Rawrcat</td><td><button>Activity</button></td><td><button>Priveledges</button></td></tr>
+                                <tr><td>Rawrcat</td><td><button>Activity</button></td><td><button>Privileges</button></td></tr>
+                                <tr><td>Rawrcat</td><td><button>Activity</button></td><td><button>Privileges</button></td></tr>
+                                <tr><td>Rawrcat</td><td><button>Activity</button></td><td><button>Privileges</button></td></tr>
+                                <tr><td>Rawrcat</td><td><button>Activity</button></td><td><button>Privileges</button></td></tr>
+                                <tr><td>Rawrcat</td><td><button>Activity</button></td><td><button>Privileges</button></td></tr>
+                                <tr><td>Rawrcat</td><td><button>Activity</button></td><td><button>Privileges</button></td></tr>
                             </tbody>
                         </table>
                         <button className="createAccountBtn" onClick={() => this.changeModalState("create")}>Create</button>
@@ -81,7 +81,7 @@ class AccountTool extends Component{
                             <div className="switchField"><span>Tool Administrator:</span><div className="switch"><input name="admin" type="checkbox" onChange={this.fieldChange} /><span className="slider round"></span></div></div>
                             <button type="submit">Create</button>
                         </form>
-                        <button className="backBtn" onClick={() => this.changeModalState("default")}>Back</button>
+                        <button className="backBtn" onClick={() => this.changeModalState("default")}><img src="/assets/back.png" /></button>
                         <button className="closeToolModalBtn" onClick={() => this.toggleAccountModal(false)}>Close</button>
                     </div>
                 </div>

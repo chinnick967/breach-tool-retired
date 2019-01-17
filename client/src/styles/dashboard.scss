@@ -27,6 +27,31 @@ html {
     overflow-x: hidden;
     overflow-y: scroll;
     font-family: HalisGR;
+    background-size: cover;
+}
+
+/* width */
+::-webkit-scrollbar {
+    background: transparent; 
+    width: 0px;
+}
+  
+/* Track */
+::-webkit-scrollbar-track {
+    background: transparent; 
+    width: 0px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: transparent; 
+    width: 0px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: transparent; 
+    width: 0px;
 }
 
 .header {
@@ -239,7 +264,7 @@ button, input[type=submit] {
     left: 0;
     .panel {
         width: 450px;
-        height: 60%;
+        height: 550px;
         position: absolute;
         margin: 0 auto;
         left: 0;
@@ -660,10 +685,14 @@ button, input[type=submit] {
         position: absolute;
         top: 20px;
         left: 15px;
-        width: 84px;
+        width: 40px;
         height: 27px;
         font-size: 12px;
         padding: 5px;
+        img {
+            width: 18px;
+            height: 18px;
+        }
     }
     table {
         width: 100%;
