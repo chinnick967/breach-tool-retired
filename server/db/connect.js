@@ -15,7 +15,9 @@ mongo.connect(settings.config.mongo.url, function(err, client) {
         var admin = {
             email: settings.config.adminUser.email,
             password: settings.config.adminUser.password,
-            role: "admin"
+            admin: true,
+            find: true,
+            edit: true
         }
         bcrypt.hash(admin.password, settings.config.bcrypt.salt, null, function(err, hash) {
             if (err) {

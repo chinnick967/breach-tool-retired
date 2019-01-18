@@ -86,11 +86,49 @@ app.post('/create-account', (req, res) => {
     });
 });
 
+app.get('/get-users', (req, res) => {
+    users.getUsers(function(result) {
+        res.send(JSON.stringify({users: result}));
+    });
+});
+
+app.post('/delete-account', (req, res) => {
+    users.findUser(req.session.user, function(result) {
+        if (result.admin) {
+            if (req.session.user == req.body.user) {
+                res.send(JSON.stringify({message: "You cannot delete your own account."}))
+            } else {
+                users.deleteAccount(req.body.user, function(result) {
+                    res.send(JSON.stringify({message: result.message}));
+                });
+            }
+        } else {
+            res.send(JSON.stringify({message: "You do not have the permissions to delete a user's account. Please see a system admin. Current admin email is: " + settings.config.adminUser.email}));
+        }
+    });
+});
+
+app.post('/change-password', (req, res) => {
+    users.findUser(req.session.user, function(result) {
+        if (result.admin) {
+            users.changePassword(req.body.user, req.body.password, function(result) {
+                res.send(JSON.stringify({message: result.message}));
+            });
+        } else {
+            res.send(JSON.stringify({message: "You do not have the permissions to edit a user's password. Please see a system admin. Current admin email is: " + settings.config.adminUser.email}));
+        }
+    });
+});
+
 app.get('/check-session', (req, res) => {
     if (req.session.user) {
         req.session.user = req.session.user; // refresh session
         users.findUser(req.session.user, function(result) {
-            res.send(JSON.stringify(result));
+            if (result) {
+                res.send(JSON.stringify(result));
+            } else {
+                res.send(JSON.stringify({error: true, message: "Unable to find this user account. This account may have been deleted."}));
+            }
         });
     } else {
         res.send(JSON.stringify({error: true, message: "Session doesn't exist"}));

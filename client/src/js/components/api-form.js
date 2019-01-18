@@ -70,7 +70,7 @@ class ApiForm extends Component{
                             <textarea name={element.name} placeholder={element.placeholder} type="text" required={element.required} onChange={this.handleFieldChange} /> : null
                         }
                         {element.type == "bool" ?
-                            <div><div className="switch"><input name={element.name} onChange={this.handleFieldChange} type="checkbox" /><span className="slider round"></span></div></div> : null
+                            <div><div className="switch"><input name={element.name} onChange={this.handleFieldChange} type="checkbox" defaultChecked="true" /><span className="slider round"></span></div></div> : null
                         }
                         {element.type == "array" ?
                             <ArrayInput parent={element.name} name={element.name} array={"true"} placeholder={element.placeholder} required={element.required} handlefieldchange={this.handleFieldChange} /> : null

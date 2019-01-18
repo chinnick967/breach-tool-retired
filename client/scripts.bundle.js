@@ -369,7 +369,8 @@ function (_Component) {
         }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
           name: element.name,
           onChange: _this3.handleFieldChange,
-          type: "checkbox"
+          type: "checkbox",
+          defaultChecked: "true"
         }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
           className: "slider round"
         }))) : null, element.type == "array" ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_array_input_js__WEBPACK_IMPORTED_MODULE_1__["default"], {
@@ -1093,9 +1094,13 @@ function (_Component) {
     _this.renderAccountModal = _this.renderAccountModal.bind(_assertThisInitialized(_assertThisInitialized(_this)));
     _this.fieldChange = _this.fieldChange.bind(_assertThisInitialized(_assertThisInitialized(_this)));
     _this.handleSubmit = _this.handleSubmit.bind(_assertThisInitialized(_assertThisInitialized(_this)));
+    _this.deleteAccount = _this.deleteAccount.bind(_assertThisInitialized(_assertThisInitialized(_this)));
+    _this.changePassword = _this.changePassword.bind(_assertThisInitialized(_assertThisInitialized(_this)));
     _this.state = {
       open: false,
       current: "default",
+      users: [],
+      selectedUser: null,
       form: {
         find: false,
         edit: false,
@@ -1119,10 +1124,10 @@ function (_Component) {
     }
   }, {
     key: "changeModalState",
-    value: function changeModalState(state) {
-      this.setState({
-        current: state
-      });
+    value: function changeModalState(state, optionalStateParams) {
+      optionalStateParams = optionalStateParams || {};
+      optionalStateParams.current = state;
+      this.setState(optionalStateParams);
     }
   }, {
     key: "fieldChange",
@@ -1159,6 +1164,8 @@ function (_Component) {
       }).then(function (res) {
         return res.json();
       }).then(function (result) {
+        _this2.getUsers();
+
         _this2.changeModalState("default");
 
         alert(result.message);
@@ -1167,9 +1174,89 @@ function (_Component) {
       });
     }
   }, {
+    key: "deleteAccount",
+    value: function deleteAccount() {
+      var _this3 = this;
+
+      var user = this.state.selectedUser;
+      var conf = confirm("Are you sure you want to delete the account belonging to " + user.email + "?");
+
+      if (conf) {
+        fetch('/delete-account', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            user: user.email
+          })
+        }).then(function (res) {
+          return res.json();
+        }).then(function (result) {
+          _this3.getUsers();
+
+          _this3.changeModalState("default");
+
+          alert(result.message);
+        }, function (error) {
+          console.log(error);
+          alert("An error occurred on the server.");
+        });
+      }
+    }
+  }, {
+    key: "changePassword",
+    value: function changePassword() {
+      var pass = prompt("Please enter a new password for the user.");
+      var user = this.state.selectedUser;
+
+      if (pass) {
+        fetch('/change-password', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            user: user.email,
+            password: pass
+          })
+        }).then(function (res) {
+          return res.json();
+        }).then(function (result) {
+          alert(result.message);
+        }, function (error) {
+          console.log(error);
+          alert("An error occurred on the server.");
+        });
+      }
+    }
+  }, {
+    key: "changePrivilege",
+    value: function changePrivilege() {}
+  }, {
+    key: "componentDidMount",
+    value: function componentDidMount() {
+      this.getUsers();
+    }
+  }, {
+    key: "getUsers",
+    value: function getUsers() {
+      var _this4 = this;
+
+      fetch("/get-users").then(function (res) {
+        return res.json();
+      }).then(function (result) {
+        _this4.setState({
+          users: result.users
+        });
+      }, function (error) {
+        console.log("Fetch users error");
+      });
+    }
+  }, {
     key: "renderAccountModal",
     value: function renderAccountModal() {
-      var _this3 = this;
+      var _this5 = this;
 
       var jsx;
 
@@ -1178,15 +1265,23 @@ function (_Component) {
           className: "overlay"
         }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
           className: "container account modal"
-        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h1", null, "Accounts"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("table", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("thead", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, "Name"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, "Activity"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, "Privileges"))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tbody", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, "Rawrcat"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", null, "Activity")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", null, "Privileges"))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, "Rawrcat"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", null, "Activity")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", null, "Privileges"))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, "Rawrcat"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", null, "Activity")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", null, "Privileges"))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, "Rawrcat"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", null, "Activity")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", null, "Privileges"))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, "Rawrcat"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", null, "Activity")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", null, "Privileges"))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, "Rawrcat"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", null, "Activity")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", null, "Privileges"))))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h1", null, "Accounts"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("table", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("thead", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, "Email"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, "Actions"))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tbody", null, this.state.users.map(function (user) {
+          return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, user.email), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+            onClick: function onClick() {
+              return _this5.changeModalState("actions", {
+                selectedUser: user
+              });
+            }
+          }, "Actions")));
+        }))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
           className: "createAccountBtn",
           onClick: function onClick() {
-            return _this3.changeModalState("create");
+            return _this5.changeModalState("create");
           }
         }, "Create"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
           className: "closeToolModalBtn",
           onClick: function onClick() {
-            return _this3.toggleAccountModal(false);
+            return _this5.toggleAccountModal(false);
           }
         }, "Close")));
       } else if (this.state.current == "create") {
@@ -1241,14 +1336,77 @@ function (_Component) {
         }, "Create")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
           className: "backBtn",
           onClick: function onClick() {
-            return _this3.changeModalState("default");
+            return _this5.changeModalState("default");
           }
         }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("img", {
           src: "/assets/back.png"
         })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
           className: "closeToolModalBtn",
           onClick: function onClick() {
-            return _this3.toggleAccountModal(false);
+            return _this5.toggleAccountModal(false);
+          }
+        }, "Close")));
+      } else if (this.state.current == "actions") {
+        jsx = react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+          className: "overlay"
+        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+          className: "container account modal actions"
+        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h1", null, this.state.selectedUser.email), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("form", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+          className: "switchField"
+        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null, "Find Game Data:"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+          className: "switch"
+        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+          name: "find",
+          defaultChecked: this.state.selectedUser.find,
+          type: "checkbox",
+          onChange: this.changePrivilege
+        }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
+          className: "slider round"
+        }))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+          className: "switchField"
+        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null, "Edit Game Data:"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+          className: "switch"
+        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+          name: "edit",
+          defaultChecked: this.state.selectedUser.edit,
+          type: "checkbox",
+          onChange: this.changePrivilege
+        }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
+          className: "slider round"
+        }))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+          className: "switchField"
+        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null, "Tool Administrator:"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+          className: "switch"
+        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+          name: "admin",
+          defaultChecked: this.state.selectedUser.admin,
+          type: "checkbox",
+          onChange: this.changePrivilege
+        }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
+          className: "slider round"
+        })))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+          className: "optionBtn"
+        }, "View Activity"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+          className: "optionBtn",
+          onClick: function onClick() {
+            return _this5.changePassword();
+          }
+        }, "Change Password"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+          className: "optionBtn",
+          onClick: function onClick() {
+            return _this5.deleteAccount();
+          }
+        }, "Delete User"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+          className: "backBtn",
+          onClick: function onClick() {
+            return _this5.changeModalState("default");
+          }
+        }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("img", {
+          src: "/assets/back.png"
+        })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+          className: "closeToolModalBtn",
+          onClick: function onClick() {
+            return _this5.toggleAccountModal(false);
           }
         }, "Close")));
       }
@@ -1258,12 +1416,12 @@ function (_Component) {
   }, {
     key: "render",
     value: function render() {
-      var _this4 = this;
+      var _this6 = this;
 
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, this.state.open == false ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
         className: "tool account",
         onClick: function onClick() {
-          return _this4.toggleAccountModal(true);
+          return _this6.toggleAccountModal(true);
         }
       }) : this.renderAccountModal());
     }

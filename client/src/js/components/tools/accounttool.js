@@ -8,9 +8,13 @@ class AccountTool extends Component{
         this.renderAccountModal = this.renderAccountModal.bind(this);
         this.fieldChange = this.fieldChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+        this.deleteAccount = this.deleteAccount.bind(this);
+        this.changePassword = this.changePassword.bind(this);
         this.state = {
             open: false,
             current: "default",
+            users: [],
+            selectedUser: null,
             form: {
                 find: false,
                 edit: false,
@@ -27,8 +31,10 @@ class AccountTool extends Component{
         this.setState({open: bool});
     }
 
-    changeModalState(state) {
-        this.setState({current: state});
+    changeModalState(state, optionalStateParams) {
+        optionalStateParams = optionalStateParams || {};
+        optionalStateParams.current = state;
+        this.setState(optionalStateParams);
     }
 
     fieldChange(e) {
@@ -57,6 +63,7 @@ class AccountTool extends Component{
         .then(res => res.json())
         .then(
             (result) => {
+                this.getUsers();
                 this.changeModalState("default");
                 alert(result.message);
             },
@@ -64,6 +71,71 @@ class AccountTool extends Component{
                 alert(error);
             }
         )
+    }
+
+    deleteAccount() {
+        var user = this.state.selectedUser;
+        var conf = confirm("Are you sure you want to delete the account belonging to " + user.email + "?");
+        if (conf) {
+            fetch('/delete-account', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({user: user.email}),
+            })
+            .then(res => res.json())
+            .then(
+            (result) => {
+                this.getUsers();
+                this.changeModalState("default");
+                alert(result.message);
+            },
+            (error) => {
+                console.log(error);
+                alert("An error occurred on the server.");
+            })
+        }
+    }
+
+    changePassword() {
+        var pass = prompt("Please enter a new password for the user.");
+        var user = this.state.selectedUser;
+        if (pass) {
+            fetch('/change-password', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({user: user.email, password: pass}),
+            })
+            .then(res => res.json())
+            .then(
+            (result) => {
+                alert(result.message);
+            },
+            (error) => {
+                console.log(error);
+                alert("An error occurred on the server.");
+            })
+        }
+    }
+
+    changePrivilege() {
+
+    }
+
+    componentDidMount() {
+        this.getUsers();
+    }
+
+    getUsers() {
+        fetch("/get-users")
+         .then(res => res.json())
+         .then(
+            (result) => {
+                this.setState({users: result.users});
+            },
+            (error) => {
+               console.log("Fetch users error");
+            }
+         )
     }
 
     renderAccountModal() {
@@ -75,15 +147,12 @@ class AccountTool extends Component{
                         <h1>Accounts</h1>
                         <table>
                             <thead>
-                                <tr><th>Name</th><th>Activity</th><th>Privileges</th></tr>
+                                <tr><th>Email</th><th>Actions</th></tr>
                             </thead>
                             <tbody>
-                                <tr><td>Rawrcat</td><td><button>Activity</button></td><td><button>Privileges</button></td></tr>
-                                <tr><td>Rawrcat</td><td><button>Activity</button></td><td><button>Privileges</button></td></tr>
-                                <tr><td>Rawrcat</td><td><button>Activity</button></td><td><button>Privileges</button></td></tr>
-                                <tr><td>Rawrcat</td><td><button>Activity</button></td><td><button>Privileges</button></td></tr>
-                                <tr><td>Rawrcat</td><td><button>Activity</button></td><td><button>Privileges</button></td></tr>
-                                <tr><td>Rawrcat</td><td><button>Activity</button></td><td><button>Privileges</button></td></tr>
+                                {this.state.users.map(user => (
+                                    <tr><td>{user.email}</td><td><button onClick={() => this.changeModalState("actions", {selectedUser: user})}>Actions</button></td></tr>
+                                ))}
                             </tbody>
                         </table>
                         <button className="createAccountBtn" onClick={() => this.changeModalState("create")}>Create</button>
@@ -105,6 +174,24 @@ class AccountTool extends Component{
                             <div className="switchField"><span>Tool Administrator:</span><div className="switch"><input name="admin" type="checkbox" onChange={this.fieldChange} /><span className="slider round"></span></div></div>
                             <button type="submit">Create</button>
                         </form>
+                        <button className="backBtn" onClick={() => this.changeModalState("default")}><img src="/assets/back.png" /></button>
+                        <button className="closeToolModalBtn" onClick={() => this.toggleAccountModal(false)}>Close</button>
+                    </div>
+                </div>
+            );
+        } else if (this.state.current == "actions") {
+            jsx = (
+                <div className="overlay">
+                    <div className="container account modal actions">
+                        <h1>{this.state.selectedUser.email}</h1>
+                        <form>
+                            <div className="switchField"><span>Find Game Data:</span><div className="switch"><input name="find" defaultChecked={this.state.selectedUser.find} type="checkbox" onChange={this.changePrivilege} /><span className="slider round"></span></div></div>
+                            <div className="switchField"><span>Edit Game Data:</span><div className="switch"><input name="edit" defaultChecked={this.state.selectedUser.edit} type="checkbox" onChange={this.changePrivilege} /><span className="slider round"></span></div></div>
+                            <div className="switchField"><span>Tool Administrator:</span><div className="switch"><input name="admin" defaultChecked={this.state.selectedUser.admin} type="checkbox" onChange={this.changePrivilege} /><span className="slider round"></span></div></div>
+                        </form>
+                        <button className="optionBtn">View Activity</button>
+                        <button className="optionBtn" onClick={() => this.changePassword()}>Change Password</button>
+                        <button className="optionBtn" onClick={() => this.deleteAccount()}>Delete User</button>
                         <button className="backBtn" onClick={() => this.changeModalState("default")}><img src="/assets/back.png" /></button>
                         <button className="closeToolModalBtn" onClick={() => this.toggleAccountModal(false)}>Close</button>
                     </div>

@@ -654,7 +654,7 @@ button, input[type=submit] {
         box-shadow: 0 0 21px #fa6705;
         padding: 10px 5px;
         z-index: 4;
-        transition: 250ms ease-in-out;
+        transition: filter 250ms ease-in-out;
         text-align: center;
     }
     .closeToolModalBtn {
@@ -690,8 +690,10 @@ button, input[type=submit] {
         font-size: 12px;
         padding: 5px;
         img {
+            top: -1px;
             width: 18px;
             height: 18px;
+            position: relative;
         }
     }
     table {
@@ -704,6 +706,9 @@ button, input[type=submit] {
         }
         td {
             padding: 8px 10px;
+            max-width: 150px;
+            overflow: hidden;
+            text-overflow: ellipsis;
             button {
                 height: 30px;
                 width: 80px;
@@ -737,6 +742,16 @@ button, input[type=submit] {
             .switch{
                 margin-top: -5px;
             }
+        }
+    }
+    .actions {
+        form {
+            height: 200px;
+            margin-top: 40px;
+        }
+        .optionBtn {
+            margin-bottom: 20px;
+            width: 100%;
         }
     }
 }
