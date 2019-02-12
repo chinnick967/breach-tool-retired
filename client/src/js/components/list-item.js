@@ -8,7 +8,8 @@ class ListItem extends Component{
     constructor(props) {
         super(props);
         this.state = {
-            showPanel: false
+            showPanel: false,
+            user: this.props.user
         }
     }
 
@@ -17,6 +18,7 @@ class ListItem extends Component{
     }
 
    render(){
+       console.log(this.state.user);
       return(
         <li>
             <InfoBtn description={this.props.data.description}></InfoBtn> {this.props.data.name} 

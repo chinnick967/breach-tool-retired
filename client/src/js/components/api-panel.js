@@ -10,7 +10,8 @@ class ApiPanel extends Component{
         this.state = {
             showResponse: false,
             response: null,
-            responseStatus: "Waiting for response..."
+            responseStatus: "Waiting for response...",
+            user: this.props.user
         }
     }
 
@@ -47,7 +48,7 @@ class ApiPanel extends Component{
             <div className="panel container" responseopen={this.state.showResponse.toString()}>
                 <h3>Submit a Request</h3>
                 <small className="form-note">{this.props.data.note ? this.props.data.note : null}</small>
-                <ApiForm showResponseData={this.showResponseData} showResponsePanel={this.showResponsePanel} data={this.props.data} />
+                <ApiForm user={this.state.user} showResponseData={this.showResponseData} showResponsePanel={this.showResponsePanel} data={this.props.data} />
             </div>
             {this.state.showResponse ?
                 <div className={"panel container response " + (this.state.response == null ? "" : "done")}>

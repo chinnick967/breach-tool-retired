@@ -19,6 +19,8 @@ app.use(session({
     }
 }));
 
+var Logs = require('./server/logging/logging.js');
+
 /* Breach API URL */
 const url = "";
 
@@ -80,7 +82,6 @@ app.post('/create-account', (req, res) => {
         admin: req.body.admin,
         createdAt: new Date()
     }
-    console.log(user);
     users.createUser(user, function(result) {
         res.send(result);
     });
@@ -141,6 +142,16 @@ app.get('/clear-session', (req, res) => {
     } else {
         res.send(JSON.stringify({error: true, message: "Session doesn't exist"}));
     }
+});
+
+app.get('/get-logs', (req, res) => {
+    Logs.fetchLogs(function(result) {
+        if (result) {
+            res.send(JSON.stringify({logs: result}));
+        } else {
+            res.send(JSON.stringify({error: true, message: "An error occurred when attempting to retrieve the Request Logs."}));
+        }
+    });
 });
 
 /* endpoint for health check from load balancer */

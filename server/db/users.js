@@ -5,6 +5,7 @@ var bcrypt = require('bcrypt-nodejs');
 module.exports.validateUser = function(email, password, callback) {
     // validate with email/password
     mongo.db.collection("Users").findOne({email: email}, function(err, result) {
+        console.log(result);
         if (!err && result) {
             bcrypt.compare(password, result.password, function(err, check) {
                 if (check) {

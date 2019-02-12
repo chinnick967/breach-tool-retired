@@ -9,13 +9,19 @@ class ApiForm extends Component{
         this.handleFieldChange = this.handleFieldChange.bind(this);
 
         this.state = {
-            form: {}
+            form: {},
+            user: this.props.user
         }
+    }
+
+    componentDidMount() {
+        this.state.form.request = this.props.data;
     }
 
     handleSubmit(e) {
         event.preventDefault();
         var formData = this.state.form;
+        formData["CS Agent Id"] = this.state.user["_id"];
         this.props.showResponsePanel(true);
         fetch('/test', {
             method: 'POST',

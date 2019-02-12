@@ -3,7 +3,6 @@ import React, { Component } from 'react';
 import List from './components/list.js';
 import Tools from './components/tools.js';
 import Signin from './components/signin.js';
-import { RSA_NO_PADDING } from 'constants';
 
 class App extends Component{
    constructor(props) {
@@ -66,11 +65,12 @@ class App extends Component{
                   </div>
                   <main>
                      {Object.keys(lists).map(key => (
-                        <List user={user} key={key} data={lists[key]}></List>
+                        <List user={this.state.user} key={key} data={lists[key]}></List>
                      ))}
                   </main>
                   <Tools user={user} />
                   <div id="toolModal"></div>
+                  <div id="logModal"></div>
                </div>
             );
          }

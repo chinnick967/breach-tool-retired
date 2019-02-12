@@ -4,28 +4,21 @@ exports.apiList = {
         description: "Look up a player's game account using one parameter",
         type: "GET",
         uri: "/api/cs/lookupaccount",
-        note: "Only one field needs to be completed for submission",
+        note: "Find by character name/tag or Account Id",
         parameters: [
             {
-                name: "EnmasseUserID",
-                prettyName: "En Masse User ID",
+                name: "QC Master Account Id",
+                prettyName: "QC Master Account ID",
                 placeholder: "123456",
                 type: "int",
-                required: false
+                required: true
             },
             {
-                name: "AccountId",
-                prettyName: "QC Games Account ID",
+                name: "QC Game Account ID",
+                prettyName: "QC's Account ID for Breach",
                 placeholder: "123456",
                 type: "int",
-                required: false
-            },
-            {
-                name: "CharacterId",
-                prettyName: "QC Games Character ID",
-                placeholder: "123456",
-                type: "int",
-                required: false
+                required: true
             },
             {
                 name: "CharacterName",
@@ -33,6 +26,29 @@ exports.apiList = {
                 placeholder: "coolguy#8445",
                 type: "string",
                 required: false
+            },
+            {
+                name: "AccountId",
+                prettyName: "QC Internal Account Id",
+                placeholder: "123456",
+                type: "int",
+                required: false
+            }
+        ]
+    },
+    partialLookup: {
+        name: "Regex Search",
+        description: "Find player using a REGEX pattern (returns list of players)",
+        type: "GET",
+        uri: "/api/cs/findnames",
+        note: "Find player using a REGEX pattern (returns list of players)",
+        parameters: [
+            {
+                name: "NamePattern",
+                prettyName: "Regex Name Pattern",
+                placeholder: "abc{2,5}",
+                type: "string",
+                required: true
             }
         ]
     },
@@ -44,15 +60,8 @@ exports.apiList = {
         note: "This will ban the user from all Breach services",
         parameters: [
             {
-                name: "CSAgentId",
-                prettyName: "CS Agent ID",
-                type: "string",
-                placeholder: "CSAgent1",
-                required: true
-            },
-            {
-                name: "EnmasseUserIDs",
-                prettyName: "En Masse User IDs",
+                name: "AccountIds",
+                prettyName: "User Account Ids",
                 type: "array",
                 placeholder: "123456",
                 required: true
@@ -61,8 +70,8 @@ exports.apiList = {
                 name: "BanDuration",
                 prettyName: "Ban Duration",
                 type: "string",
-                placeholder: "P1DT12H",
-                required: false
+                placeholder: "P1DT12H (day, hours)",
+                required: true
             },
             {
                 name: "Memo",
@@ -77,6 +86,112 @@ exports.apiList = {
                 placeholder: "true",
                 type: "bool",
                 required: true
+            }
+        ]
+    },
+    unban: {
+        name: "Unban User",
+        description: "Unban a user's account",
+        type: "POST",
+        uri: "/api/cs/unban",
+        note: "This will unban a user",
+        parameters: [
+            {
+                name: "AccountIds",
+                prettyName: "User Account Ids",
+                type: "array",
+                placeholder: "123456",
+                required: true
+            },
+            {
+                name: "Memo",
+                prettyName: "Unban Memo",
+                placeholder: "This person is mean and said 'nuggets are sooo 2017' to coolguy#8445 at 10:45pm",
+                type: "blob",
+                required: true
+            }
+        ]
+    },
+    getBan: {
+        name: "Ban Info",
+        description: "Get a user's ban information",
+        type: "GET",
+        uri: "/api/cs/ban",
+        note: "Get information on a user's ban",
+        parameters: [
+            {
+                name: "AccountId",
+                prettyName: "User Account Id",
+                type: "int",
+                placeholder: "123456",
+                required: true
+            }
+        ]
+    },
+    kickUser: {
+        name: "Kick User",
+        description: "Kick a user",
+        type: "POST",
+        uri: "/api/cs/kick",
+        note: "Reason Code: 0-NonSpecified, 1-ServerShutdown, 2-ArchiveRestore, 3-CSAction, 4-NGSServer, Blank-CSAction",
+        parameters: [
+            {
+                name: "AccountIds",
+                prettyName: "User Account Id",
+                type: "array",
+                placeholder: "123456",
+                required: true
+            },
+            {
+                name: "ReasonCode",
+                prettyName: "Reason Code (0 - 4)",
+                type: "int",
+                placeholder: "2",
+                required: false
+            },
+            {
+                name: "Memo",
+                prettyName: "Kick Memo",
+                placeholder: "User is hacking",
+                type: "blob",
+                required: true
+            }
+        ]
+    },
+    userLogs: {
+        name: "User Logs",
+        description: "Get a list of events taken against the account",
+        type: "GET",
+        uri: "/api/cs/logs",
+        note: "Event Types: 1-Login, 2-Logout, 3-Kick, 4-Ban, 5-Unban, 6-Take Authority, 7-Release, 8-Update account, Blank-All",
+        parameters: [
+            {
+                name: "AccountId",
+                prettyName: "User Account Id",
+                type: "int",
+                placeholder: "123456",
+                required: true
+            },
+            {
+                name: "EventTypes",
+                prettyName: "Event Types",
+                type: "int",
+                placeholder: "2",
+                required: false
+            },
+            {
+                name: "From",
+                prettyName: "From:",
+                placeholder: "2008-09-15T15:53:00",
+                type: "string",
+                required: false
+            },
+            {
+                name: "To",
+                prettyName: "To:",
+                placeholder: "2008-10-15T15:53:00",
+                type: "string",
+                required: false
             }
         ]
     }
