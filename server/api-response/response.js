@@ -30,6 +30,7 @@ exports.fakeResponse = function(formData) {
             'Content-Length': postData.length
         }
     }
+    console.log("request");
     var req = https.request(options, (res) => {
         console.log('statusCode:', res.statusCode);
         console.log('headers:', res.headers);
