@@ -1,6 +1,8 @@
 import express from 'express';
 const app = express();
 import path from 'path';
+var https = require('https');
+var fs = require('fs');
 
 var session = require('express-session');
 
@@ -54,8 +56,10 @@ app.get('/lists', (req, res) => {
 
 /* API response imports */
 import apiResponse from './server/api-response/response.js';
+import { fstat } from 'fs';
 
 app.post('/test', (req, res) => {
+    //console.log(req.body);
     res.send(apiResponse.fakeResponse(req.body));
 });
 
@@ -154,9 +158,31 @@ app.get('/get-logs', (req, res) => {
     });
 });
 
+process.on('uncaughtException', function (err) {
+    console.log(err);
+}); 
+
 /* endpoint for health check from load balancer */
 app.get('/health', (req, res) => {
     res.send('');
 });
 
-app.listen(8000, ()=> console.log('App listening on port 8000'));
+//app.listen(8000, ()=> console.log('App listening on port 8000'));
+var options = {
+    key: fs.readFileSync('./key.pem'),
+    cert: fs.readFileSync('./cert.pem'),
+    passphrase: "P@ssword"
+};
+/*var server = https.createServer(options, app).listen(8000, function(err) {
+    if (err) {
+        console.log("ERROR");
+        console.log(err);
+    }
+    console.log("Server started on port 8000");
+});*/
+
+https.createServer(options, app, (req, res) => {
+    res.end('Hello, world!');
+  }).listen(8080, 'localhost', () => {
+    console.log('https server start');
+  });

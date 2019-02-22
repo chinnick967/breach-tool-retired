@@ -168,7 +168,7 @@ class AccountTool extends Component{
                         <form onSubmit={this.handleSubmit}>
                             <input type="text" name="Email" placeholder="Email" onChange={this.fieldChange} />
                             <input type="password" name="Password" placeholder="Password" onChange={this.fieldChange} />
-                            <h2>Priveledges</h2>
+                            <h2>Privileges</h2>
                             <div className="switchField"><span>Find Game Data:</span><div className="switch"><input name="find" type="checkbox" onChange={this.fieldChange} /><span className="slider round"></span></div></div>
                             <div className="switchField"><span>Edit Game Data:</span><div className="switch"><input name="edit" type="checkbox" onChange={this.fieldChange} /><span className="slider round"></span></div></div>
                             <div className="switchField"><span>Tool Administrator:</span><div className="switch"><input name="admin" type="checkbox" onChange={this.fieldChange} /><span className="slider round"></span></div></div>

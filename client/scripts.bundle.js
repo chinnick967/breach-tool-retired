@@ -300,6 +300,7 @@ function (_Component) {
 
       event.preventDefault();
       var formData = this.state.form;
+      console.log(this.state.user["_id"]);
       formData["CS Agent Id"] = this.state.user["_id"];
       this.props.showResponsePanel(true);
       fetch('/test', {
@@ -1320,7 +1321,7 @@ function (_Component) {
           name: "Password",
           placeholder: "Password",
           onChange: this.fieldChange
-        }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h2", null, "Priveledges"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h2", null, "Privileges"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
           className: "switchField"
         }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null, "Find Game Data:"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
           className: "switch"
