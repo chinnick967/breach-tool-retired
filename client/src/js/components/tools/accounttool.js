@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import ReactDOM from "react-dom";
+import LogTool from "./logtool.js";
 
 class AccountTool extends Component{
     constructor(props) {
@@ -196,6 +197,10 @@ class AccountTool extends Component{
                         <button className="closeToolModalBtn" onClick={() => this.toggleAccountModal(false)}>Close</button>
                     </div>
                 </div>
+            );
+        } else if (this.state.current == "logs") {
+            jsx = (
+                <LogTool></LogTool>
             );
         }
         return ReactDOM.createPortal(jsx, document.querySelector("#toolModal"));

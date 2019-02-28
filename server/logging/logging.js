@@ -1,14 +1,22 @@
 var mongo = require('../db/connect.js');
 
 exports.logRequest = function(user, sentData, request, receivedData) {
-    var log = {
-        user: user,
-        request: request,
-        sentData: sentData,
-        receivedData: receivedData,
-        timeStamp: new Date()
-    };
-    mongo.db.collection("Logs").insertOne(log);
+    try {
+        if (typeof receivedData == "string") {
+            receivedData = JSON.parse(receivedData);
+        }
+    } catch(e) {
+        console.log(e);
+    } finally {
+        var log = {
+            user: user,
+            request: request,
+            sentData: sentData,
+            receivedData: receivedData,
+            timeStamp: new Date()
+        };
+        mongo.db.collection("Logs").insertOne(log);
+    }
 }
 
 exports.fetchLogs = function(callback) {

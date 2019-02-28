@@ -28,7 +28,8 @@ class ApiPanel extends Component{
     }
 
     nestedKeys(json) {
-        if (typeof json == "object") {
+        console.log(json);
+        if (typeof json == "object" && json) {
             var arr = Object.keys(json).sort();
             return arr.map(key => {
                 if (typeof json[key] == "object") {
@@ -37,7 +38,7 @@ class ApiPanel extends Component{
                     return <li><strong>{key}: </strong>{this.nestedKeys(json[key])}</li>
                 }
             });
-        } else {
+        } else if (json) {
             return <span>{json.toString()}</span>
         }
     }

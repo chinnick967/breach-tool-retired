@@ -4,21 +4,22 @@ exports.apiList = {
         description: "Look up a player's game account using one parameter",
         type: "GET",
         uri: "/api/cs/lookupaccount",
-        note: "Find by character name/tag or Account Id",
+        note: "Find by character name/tag or Account Id. Only fill in ONE field, more than one will return an error.",
+        authority: false,
         parameters: [
             {
-                name: "QC Master Account Id",
+                name: "QCMasterAccount",
                 prettyName: "QC Master Account ID",
                 placeholder: "123456",
                 type: "int",
-                required: true
+                required: false
             },
             {
-                name: "QC Game Account ID",
+                name: "QCGameAccount",
                 prettyName: "QC's Account ID for Breach",
                 placeholder: "123456",
                 type: "int",
-                required: true
+                required: false
             },
             {
                 name: "CharacterName",
@@ -134,6 +135,7 @@ exports.apiList = {
         type: "POST",
         uri: "/api/cs/kick",
         note: "Reason Code: 0-NonSpecified, 1-ServerShutdown, 2-ArchiveRestore, 3-CSAction, 4-NGSServer, Blank-CSAction",
+        authority: true,
         parameters: [
             {
                 name: "AccountIds",

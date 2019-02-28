@@ -71,6 +71,7 @@ class App extends Component{
                   <Tools user={user} />
                   <div id="toolModal"></div>
                   <div id="logModal"></div>
+                  <div id="dataModal"></div>
                </div>
             );
          }

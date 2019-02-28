@@ -216,6 +216,8 @@ function (_Component) {
             id: "toolModal"
           }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
             id: "logModal"
+          }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+            id: "dataModal"
           }));
         }
       } else if (sessionChecked) {
@@ -300,10 +302,9 @@ function (_Component) {
 
       event.preventDefault();
       var formData = this.state.form;
-      console.log(this.state.user["_id"]);
-      formData["CS Agent Id"] = this.state.user["_id"];
+      formData["CSAgentId"] = this.state.user["email"];
       this.props.showResponsePanel(true);
-      fetch('/test', {
+      fetch('/apiRequest', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -488,7 +489,9 @@ function (_Component) {
     value: function nestedKeys(json) {
       var _this2 = this;
 
-      if (_typeof(json) == "object") {
+      console.log(json);
+
+      if (_typeof(json) == "object" && json) {
         var arr = Object.keys(json).sort();
         return arr.map(function (key) {
           if (_typeof(json[key]) == "object") {
@@ -497,7 +500,7 @@ function (_Component) {
             return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("li", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", null, key, ": "), _this2.nestedKeys(json[key]));
           }
         });
-      } else {
+      } else if (json) {
         return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null, json.toString());
       }
     }
@@ -1078,6 +1081,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react-dom */ "./node_modules/react-dom/index.js");
 /* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react_dom__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _logtool_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./logtool.js */ "./client/src/js/components/tools/logtool.js");
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -1095,6 +1099,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 function _setPrototypeOf(o, p) { _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) { o.__proto__ = p; return o; }; return _setPrototypeOf(o, p); }
 
 function _assertThisInitialized(self) { if (self === void 0) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return self; }
+
 
 
 
@@ -1429,6 +1434,8 @@ function (_Component) {
             return _this5.toggleAccountModal(false);
           }
         }, "Close")));
+      } else if (this.state.current == "logs") {
+        jsx = react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_logtool_js__WEBPACK_IMPORTED_MODULE_2__["default"], null);
       }
 
       return react_dom__WEBPACK_IMPORTED_MODULE_1___default.a.createPortal(jsx, document.querySelector("#toolModal"));
@@ -1538,6 +1545,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react_dom__WEBPACK_IMPORTED_MODULE_1__);
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
@@ -1571,7 +1580,16 @@ function (_Component) {
     _this.state = {
       open: false,
       current: "default",
-      logs: {}
+      uneditedLogs: {},
+      logs: {},
+      dataModal: false,
+      data: {},
+      dataModalTitle: "",
+      filters: {
+        "Admin": "",
+        "Request": "",
+        "Date": ""
+      }
     };
     return _this;
   }
@@ -1589,26 +1607,79 @@ function (_Component) {
       fetch("/get-logs").then(function (res) {
         return res.json();
       }).then(function (result) {
-        console.log(result.logs);
+        result.logs = result.logs.reverse();
 
         _this2.setState({
-          logs: result.logs
+          logs: result.logs,
+          uneditedLogs: result.logs
         });
       }, function (error) {
         console.log("A server error occurred when attempting to retrieve the Request Logs.");
       });
     }
   }, {
+    key: "filterLogs",
+    value: function filterLogs() {
+      var filteredLogs = this.state.uneditedLogs;
+      var filters = this.state.filters;
+
+      for (var key in filters) {
+        switch (key) {
+          case "Admin":
+            console.log(filters[key]);
+            filteredLogs = filteredLogs.filter(function (log) {
+              return log.user.includes(filters[key]);
+            });
+            break;
+
+          default:
+            break;
+        }
+      }
+
+      this.setState({
+        logs: filteredLogs
+      });
+    }
+  }, {
+    key: "handleFilterFieldChange",
+    value: function handleFilterFieldChange(key, e) {
+      this.changeFilter(key, e.target.value);
+    }
+  }, {
+    key: "changeFilter",
+    value: function changeFilter(key, value) {
+      var _this3 = this;
+
+      this.setState({
+        filters: _defineProperty({}, key, value)
+      }, function () {
+        _this3.filterLogs();
+      });
+    }
+  }, {
     key: "toggleLogModal",
     value: function toggleLogModal(bool) {
+      this.getLogs();
       this.setState({
         open: bool
       });
     }
   }, {
+    key: "toggleDataModal",
+    value: function toggleDataModal(bool, d, title) {
+      d = d || {};
+      title = title || "";
+      this.setState({
+        dataModal: bool,
+        data: d,
+        dataModalTitle: title
+      });
+    }
+  }, {
     key: "renderLogModal",
     value: function renderLogModal() {
-      var _this3 = this;
+      var _this4 = this;
 
       var jsx;
 
@@ -1618,9 +1689,9 @@ function (_Component) {
         }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
           className: "container log modal"
         }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h1", null, "Request Logs"), this.state.logs ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("table", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("thead", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null, "Admin"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
-          type: "text",
-          placeholder: "filter"
-        })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null, "User"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
+          onChange: function onChange(e) {
+            return _this4.handleFilterFieldChange("Admin", e);
+          },
           type: "text",
           placeholder: "filter"
         })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null, "Request"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
@@ -1629,14 +1700,22 @@ function (_Component) {
         })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null, "Sent")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null, "Response")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null, "Date"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
           type: "text",
           placeholder: "filter"
-        })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null, "Time")))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tbody", null, this.state.logs.map(function (log, index) {
-          return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, log.user), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, "#CoolGuy#1234"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, "Ban"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", null, "Sent")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", null, "Response")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, "12/2/19"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, "10:54am"));
-        }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, "dakota@enmasse.com"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, "#CoolGuy#1234"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, "Ban"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", null, "Sent")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", null, "Response")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, "12/2/19"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, "10:54am")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, "dakota@enmasse.com"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, "#CoolGuy#1234"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, "Ban"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", null, "Sent")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", null, "Response")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, "12/2/19"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, "10:54am")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, "dakota@enmasse.com"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, "#CoolGuy#1234"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, "Ban"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", null, "Sent")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", null, "Response")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, "12/2/19"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, "10:54am")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, "dakota@enmasse.com"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, "#CoolGuy#1234"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, "Ban"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", null, "Sent")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", null, "Response")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, "12/2/19"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, "10:54am")))) : react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h1", {
+        })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null, "Time")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("th", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", null, "Status")))), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tbody", null, this.state.logs.map(function (log, index) {
+          return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("tr", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, log.user), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, log.request.name), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+            onClick: function onClick() {
+              return _this4.toggleDataModal(true, log.sentData, "Sent Data");
+            }
+          }, "Sent")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+            onClick: function onClick() {
+              return _this4.toggleDataModal(true, log.receivedData, "Received Data");
+            }
+          }, "Response")), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, new Date(log.timeStamp).toLocaleDateString()), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, new Date(log.timeStamp).toLocaleTimeString()), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("td", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", null, log.receivedData["Status Code"])));
+        }))) : react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h1", {
           style: "margin-top: 170px;"
         }, "No Request Log Data"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
           className: "closeToolModalBtn",
           onClick: function onClick() {
-            return _this3.toggleLogModal(false);
+            return _this4.toggleLogModal(false);
           }
         }, "Close")));
       }
@@ -1644,16 +1723,36 @@ function (_Component) {
       return react_dom__WEBPACK_IMPORTED_MODULE_1___default.a.createPortal(jsx, document.querySelector("#logModal"));
     }
   }, {
+    key: "renderDataModal",
+    value: function renderDataModal() {
+      var _this5 = this;
+
+      var jsx;
+      jsx = react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "overlay"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "container log modal data"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("button", {
+        className: "backBtn",
+        onClick: function onClick() {
+          return _this5.toggleDataModal(false);
+        }
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("img", {
+        src: "/assets/back.png"
+      })), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h1", null, this.state.dataModalTitle), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("pre", null, JSON.stringify(this.state.data, null, 2)))));
+      return react_dom__WEBPACK_IMPORTED_MODULE_1___default.a.createPortal(jsx, document.querySelector("#logModal"));
+    }
+  }, {
     key: "render",
     value: function render() {
-      var _this4 = this;
+      var _this6 = this;
 
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, this.state.open == false ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
         className: "tool log",
         onClick: function onClick() {
-          return _this4.toggleLogModal(true);
+          return _this6.toggleLogModal(true);
         }
-      }) : this.renderLogModal());
+      }) : this.state.dataModal == false ? this.renderLogModal() : this.renderDataModal());
     }
   }]);
 

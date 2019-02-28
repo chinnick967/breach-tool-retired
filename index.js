@@ -4,6 +4,7 @@ import path from 'path';
 var https = require('https');
 var http = require('http');
 var fs = require('fs');
+var settings = require('./server/settings/settings.js');
 
 var session = require('express-session');
 
@@ -59,9 +60,10 @@ app.get('/lists', (req, res) => {
 import apiResponse from './server/api-response/response.js';
 import { fstat } from 'fs';
 
-app.post('/test', (req, res) => {
-    //console.log(req.body);
-    res.send(apiResponse.fakeResponse(req.body));
+app.post('/apiRequest', (req, res) => {
+    apiResponse.requestApiCall(req.body, (response) => {
+        res.send(response);
+    });
 });
 
 /* API user login */
@@ -168,10 +170,9 @@ app.get('/health', (req, res) => {
     res.send('');
 });
 
-//app.listen(8000, ()=> console.log('App listening on port 8000'));
 var options = {
-    key: fs.readFileSync('key.pem'),
-    cert: fs.readFileSync('key-cert.pem')
+    key: fs.readFileSync(settings.config.ssl.key),
+    cert: fs.readFileSync(settings.config.ssl.cert)
 };
 var server = https.createServer(options, app).listen(8000, function(err) {
     if (err) {

@@ -8,7 +8,16 @@ class LogTool extends Component{
         this.state = {
             open: false,
             current: "default",
-            logs: {}
+            uneditedLogs: {},
+            logs: {},
+            dataModal: false,
+            data: {},
+            dataModalTitle: "",
+            filters: {
+                "Admin": "",
+                "Request": "",
+                "Date": ""
+            }
         }
     }
 
@@ -21,8 +30,8 @@ class LogTool extends Component{
          .then(res => res.json())
          .then(
             (result) => {
-                console.log(result.logs);
-                this.setState({logs: result.logs});
+                result.logs = result.logs.reverse();
+                this.setState({logs: result.logs, uneditedLogs: result.logs});
             },
             (error) => {
                console.log("A server error occurred when attempting to retrieve the Request Logs.");
@@ -30,8 +39,41 @@ class LogTool extends Component{
          )
     }
 
+    filterLogs() {
+        var filteredLogs = this.state.uneditedLogs;
+        var filters = this.state.filters;
+        for (var key in filters) {
+            switch(key) {
+                case "Admin":
+                    console.log(filters[key]);
+                    filteredLogs = filteredLogs.filter(log => log.user.includes(filters[key]));
+                    break;
+                default:
+                    break;
+            }
+        }
+        this.setState({logs: filteredLogs});
+    }
+
+    handleFilterFieldChange(key, e) {
+        this.changeFilter(key, e.target.value);
+    }
+
+    changeFilter(key, value) {
+        this.setState({filters:{[key]: value}}, () => {
+            this.filterLogs();
+        });
+    }
+
     toggleLogModal(bool) {
+        this.getLogs();
         this.setState({open: bool});
+    }
+
+    toggleDataModal(bool, d, title) {
+        d = d || {};
+        title = title || "";
+        this.setState({dataModal: bool, data: d, dataModalTitle: title});
     }
 
     renderLogModal() {
@@ -44,16 +86,12 @@ class LogTool extends Component{
                         {this.state.logs ?
                             <table>
                                 <thead>
-                                    <tr><th><span>Admin</span><input type="text" placeholder="filter"></input></th><th><span>User</span><input type="text" placeholder="filter"></input></th><th><span>Request</span><input type="text" placeholder="filter"></input></th><th><span>Sent</span></th><th><span>Response</span></th><th><span>Date</span><input type="text" placeholder="filter"></input></th><th><span>Time</span></th></tr>
+                                    <tr><th><span>Admin</span><input onChange={(e) => this.handleFilterFieldChange("Admin", e)} type="text" placeholder="filter"></input></th><th><span>Request</span><input type="text" placeholder="filter"></input></th><th><span>Sent</span></th><th><span>Response</span></th><th><span>Date</span><input type="text" placeholder="filter"></input></th><th><span>Time</span></th><th><span>Status</span></th></tr>
                                 </thead>
                                 <tbody>
                                     {this.state.logs.map((log, index) => (
-                                        <tr><td>{log.user}</td><td>#CoolGuy#1234</td><td>Ban</td><td><button>Sent</button></td><td><button>Response</button></td><td>12/2/19</td><td>10:54am</td></tr>
+                                        <tr><td>{log.user}</td><td>{log.request.name}</td><td><button onClick={() => this.toggleDataModal(true, log.sentData, "Sent Data")}>Sent</button></td><td><button onClick={() => this.toggleDataModal(true, log.receivedData, "Received Data")}>Response</button></td><td>{new Date(log.timeStamp).toLocaleDateString()}</td><td>{new Date(log.timeStamp).toLocaleTimeString()}</td><td><strong>{log.receivedData["Status Code"]}</strong></td></tr>
                                     ))}
-                                    <tr><td>dakota@enmasse.com</td><td>#CoolGuy#1234</td><td>Ban</td><td><button>Sent</button></td><td><button>Response</button></td><td>12/2/19</td><td>10:54am</td></tr>
-                                    <tr><td>dakota@enmasse.com</td><td>#CoolGuy#1234</td><td>Ban</td><td><button>Sent</button></td><td><button>Response</button></td><td>12/2/19</td><td>10:54am</td></tr>
-                                    <tr><td>dakota@enmasse.com</td><td>#CoolGuy#1234</td><td>Ban</td><td><button>Sent</button></td><td><button>Response</button></td><td>12/2/19</td><td>10:54am</td></tr>
-                                    <tr><td>dakota@enmasse.com</td><td>#CoolGuy#1234</td><td>Ban</td><td><button>Sent</button></td><td><button>Response</button></td><td>12/2/19</td><td>10:54am</td></tr>
                                 </tbody>
                             </table>
                             : <h1 style="margin-top: 170px;">No Request Log Data</h1>
@@ -66,12 +104,28 @@ class LogTool extends Component{
         return ReactDOM.createPortal(jsx, document.querySelector("#logModal"));
     }
 
+    renderDataModal() {
+        var jsx;
+        jsx = (
+            <div className="overlay">
+                <div className="container log modal data">
+                    <button className="backBtn" onClick={() => this.toggleDataModal(false)}><img src="/assets/back.png" /></button>
+                    <h1>{this.state.dataModalTitle}</h1>
+                    <div><pre>{JSON.stringify(this.state.data, null, 2) }</pre></div>
+                </div>
+            </div>
+        );
+        return ReactDOM.createPortal(jsx, document.querySelector("#logModal"));
+    }
+
     render() {
         return(
             <div>
                 {this.state.open == false ?
                     <span className="tool log" onClick={() => this.toggleLogModal(true)}></span> :
-                    this.renderLogModal()
+                        this.state.dataModal == false ?
+                            this.renderLogModal() :
+                            this.renderDataModal()
                 }
             </div>
         );

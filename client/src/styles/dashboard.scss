@@ -212,7 +212,7 @@ main {
                 padding-top: 5px;
                 padding-bottom: 0px;
                 margin-bottom: 0px;
-                max-height: 150px;
+                max-height: 250px;
                 overflow-y: scroll;
                 overflow-x: hidden;
                 li {
@@ -670,6 +670,15 @@ button, input[type=submit] {
                     box-shadow: none;
                 }
             }
+            &.data {
+                max-width: 500px;
+                h1 {
+                    margin-bottom: 30px;
+                }
+                pre {
+                    text-align: left;
+                }
+            }
         }
     }
     button {
@@ -736,6 +745,9 @@ button, input[type=submit] {
             max-width: 150px;
             overflow: hidden;
             text-overflow: ellipsis;
+            strong {
+                color: #e2cc0c;
+            }
             button {
                 height: 30px;
                 width: 80px;

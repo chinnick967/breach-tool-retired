@@ -21,10 +21,9 @@ class ApiForm extends Component{
     handleSubmit(e) {
         event.preventDefault();
         var formData = this.state.form;
-        console.log(this.state.user["_id"]);
-        formData["CS Agent Id"] = this.state.user["_id"];
+        formData["CSAgentId"] = this.state.user["email"];
         this.props.showResponsePanel(true);
-        fetch('/test', {
+        fetch('/apiRequest', {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify(formData),

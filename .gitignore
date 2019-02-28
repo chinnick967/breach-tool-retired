@@ -1,2 +1,6 @@
 /node_modules
 /config
+cert.pem
+key-cert.pem
+keytmp.pem
+key.pem
