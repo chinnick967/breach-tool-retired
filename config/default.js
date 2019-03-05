@@ -10,6 +10,14 @@ config[env.NODE_ENV] = {
         },
         "bcrypt": {
             "salt": env.BCRYPT_SALT
+        },
+        "api": {
+            "url": env.API_URL ? env.API_URL : "milestone-cs.int.qcgd.net"
+        },
+        "server": {
+            "protocol": env.SERVER_PROTOCOL ? env.SERVER_PROTOCOL : "https",
+            "ssl_key": "key.pem",
+            "ssl_cert": "key-cert.pem"
         }
 };
 

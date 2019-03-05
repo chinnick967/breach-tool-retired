@@ -170,14 +170,18 @@ app.get('/health', (req, res) => {
     res.send('');
 });
 
-var options = {
-    key: fs.readFileSync(settings.config.ssl.key),
-    cert: fs.readFileSync(settings.config.ssl.cert)
-};
-var server = https.createServer(options, app).listen(8000, function(err) {
-    if (err) {
-        console.log("ERROR");
-        console.log(err);
-    }
-    console.log("Server started on port 8000");
-});
+if (settings.config.server.protocol == 'http') {
+    app.listen(8000, () => console.log("Server started on port 8000"));
+} else {
+    var options = {
+        key: fs.readFileSync(settings.config.server.ssl_key),
+        cert: fs.readFileSync(settings.config.server.ssl_cert)
+    };
+    var server = https.createServer(options, app).listen(8000, function(err) {
+        if (err) {
+            console.log("ERROR");
+            console.log(err);
+        }
+        console.log("Server started on port 8000 with SSL");
+    });
+}

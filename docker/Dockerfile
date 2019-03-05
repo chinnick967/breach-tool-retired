@@ -9,9 +9,7 @@ COPY package.json ${APP_ROOT}/
 RUN npm install
 
 ADD . ${APP_ROOT}
-RUN chmod +x ${APP_ROOT}/docker/entrypoint.sh && \
-    mkdir -p ${APP_ROOT}/config && \
-    cp ${APP_ROOT}/docker/config.js ${APP_ROOT}/config/default.js
+RUN chmod +x ${APP_ROOT}/docker/entrypoint.sh
 
 EXPOSE 8000
 
