@@ -158,6 +158,9 @@ function (_Component) {
           isLoaded: true,
           lists: result
         });
+
+        console.log("lists");
+        console.log(result);
       }, function (error) {
         _this2.setState({
           isLoaded: true,
@@ -293,12 +296,28 @@ function (_Component) {
   _createClass(ApiForm, [{
     key: "componentDidMount",
     value: function componentDidMount() {
+      var _this2 = this;
+
       this.state.form.request = this.props.data;
+      Object.keys(this.props.data.parameters).forEach(function (key) {
+        var parameter = _this2.props.data.parameters[key];
+
+        if (parameter.type == "hidden") {
+          var form = _this2.state.form;
+          form[parameter.name] = parameter.value;
+
+          _this2.setState({
+            form: form
+          });
+        }
+      });
+      console.log("FORM");
+      console.log(this.state.form);
     }
   }, {
     key: "handleSubmit",
     value: function handleSubmit(e) {
-      var _this2 = this;
+      var _this3 = this;
 
       event.preventDefault();
       var formData = this.state.form;
@@ -313,9 +332,9 @@ function (_Component) {
       }).then(function (res) {
         return res.json();
       }).then(function (result) {
-        _this2.props.showResponseData(result);
+        _this3.props.showResponseData(result);
       }, function (error) {
-        _this2.props.showResponseData(error);
+        _this3.props.showResponseData(error);
       });
       this.props.showResponsePanel(true);
     }
@@ -351,14 +370,14 @@ function (_Component) {
   }, {
     key: "render",
     value: function render() {
-      var _this3 = this;
+      var _this4 = this;
 
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "formWrap"
       }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("form", {
         onSubmit: this.handleSubmit
       }, this.props.data.parameters.map(function (element) {
-        return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
+        return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, element.type != "hidden" ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("label", {
           key: element.prettyName
         }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
           required: element.required
@@ -367,18 +386,18 @@ function (_Component) {
           placeholder: element.placeholder,
           type: "text",
           required: element.required,
-          onChange: _this3.handleFieldChange
+          onChange: _this4.handleFieldChange
         }) : null, element.type == "blob" ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("textarea", {
           name: element.name,
           placeholder: element.placeholder,
           type: "text",
           required: element.required,
-          onChange: _this3.handleFieldChange
+          onChange: _this4.handleFieldChange
         }) : null, element.type == "bool" ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
           className: "switch"
         }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
           name: element.name,
-          onChange: _this3.handleFieldChange,
+          onChange: _this4.handleFieldChange,
           type: "checkbox",
           defaultChecked: "true"
         }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("span", {
@@ -389,8 +408,13 @@ function (_Component) {
           array: "true",
           placeholder: element.placeholder,
           required: element.required,
-          handlefieldchange: _this3.handleFieldChange
-        }) : null);
+          handlefieldchange: _this4.handleFieldChange
+        }) : null, element.type == "dropdown" ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("select", null, element.dropdown.map(function (option, index) {
+          return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("option", {
+            key: option.value,
+            value: option.value
+          }, option.text);
+        })) : null) : null);
       }), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("input", {
         type: "submit",
         value: "Submit"
@@ -856,12 +880,12 @@ function (_Component) {
 
       return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
         className: "list container"
-      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h3", null, "User Accounts"), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("ul", null, Object.keys(this.props.data).map(function (key) {
-        return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_list_item_js__WEBPACK_IMPORTED_MODULE_1__["default"], {
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("h3", null, this.props.data.info.name), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("ul", null, Object.keys(this.props.data).map(function (key) {
+        return key != "info" ? react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_list_item_js__WEBPACK_IMPORTED_MODULE_1__["default"], {
           user: _this2.state.user,
           key: key,
           data: _this2.props.data[key]
-        });
+        }) : null;
       })));
     }
   }]);

@@ -27,6 +27,8 @@ class App extends Component{
                   isLoaded: true,
                   lists: result
                });
+               console.log("lists");
+               console.log(result);
             },
             (error) => {
                this.setState({

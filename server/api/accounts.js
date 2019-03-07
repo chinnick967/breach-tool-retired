@@ -1,4 +1,7 @@
 exports.apiList = {
+    info: {
+        name: "User Accounts"
+    },
     lookup: {
         name: "Find User",
         description: "Look up a player's game account using one parameter",
@@ -53,7 +56,39 @@ exports.apiList = {
             }
         ]
     },
-    ban: {
+    changeCharacterName: {
+        name: "Change Name",
+        prettyName: "Change Character Name",
+        description: "Change a user's name",
+        type: "POST",
+        uri: "/api/cs/changecharactername",
+        note: "Get a user's currency information",
+        authority: true,
+        parameters: [
+            {
+                name: "AccountId",
+                prettyName: "QC Internal Account Id",
+                placeholder: "123456",
+                type: "int",
+                required: true
+            },
+            {
+                name: "CharacterName",
+                prettyName: "Character Name",
+                placeholder: "DakotaIzKewl",
+                type: "string",
+                required: true
+            },
+            {
+                name: "Memo",
+                prettyName: "Memo",
+                placeholder: "User was using an inappropriate name.",
+                type: "blob",
+                required: true
+            }
+        ]
+    },
+    /*ban: {
         name: "Ban User",
         description: "Ban a user's account",
         type: "POST",
@@ -112,7 +147,7 @@ exports.apiList = {
                 required: true
             }
         ]
-    },
+    },*/
     getBan: {
         name: "Ban Info",
         description: "Get a user's ban information",

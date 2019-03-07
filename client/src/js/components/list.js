@@ -11,10 +11,12 @@ class List extends Component{
    render() {
       return(
          <div className="list container">
-            <h3>User Accounts</h3>
+            <h3>{this.props.data.info.name}</h3>
             <ul>
                {Object.keys(this.props.data).map(key => (
+                  key != "info" ?
                   <ListItem user={this.state.user} key={key} data={this.props.data[key]} />
+                  : null
                ))}
             </ul>
          </div>

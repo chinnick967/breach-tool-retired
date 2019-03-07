@@ -212,7 +212,7 @@ main {
                 padding-top: 5px;
                 padding-bottom: 0px;
                 margin-bottom: 0px;
-                max-height: 250px;
+                max-height: 500px;
                 overflow-y: scroll;
                 overflow-x: hidden;
                 li {
@@ -390,6 +390,9 @@ button, input[type=submit] {
         z-index: 4;
         font-size: 14px;
         position: relative;
+        &.hidden {
+            display: none;
+        }
         span {
             &[required] {
                 &:after {
@@ -436,6 +439,12 @@ button, input[type=submit] {
         &.arrayInput {
             margin-top: 3px;
         }
+    }
+    select {
+        float: right;
+        background: white;
+        color: black;
+        width: 150px;
     }
     textarea {
         width: 350px;

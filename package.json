@@ -4,7 +4,7 @@
   "description": "Breach API Tool",
   "main": "index.js",
   "scripts": {
-    "start-dev": "concurrently \"sudo killall node\" \" mongod \" \"nodemon --exec NODE_ENV=development babel-node index.js\" \" npm run webpack \"",
+    "start-dev": "concurrently \"sudo killall node\" \" mongod \" \"nodemon --exec NODE_ENV=development MONGO_URL='mongodb://127.0.0.1:27017' ADMINUSER_EMAIL='dakota@enmasse.com' ADMINUSER_PASSWORD='P@ssword' BCRYPT_SALT='$2a$10$K2Ezzk/w1xcDvMymI9Oqbu' API_URL='milestone-cs.int.qcgd.net' SERVER_PROTOCOL='https' CLIENT_KEY='XLHPTWPATF4NJKX3RERTE6YJEW3C65A9' SECRET_KEY='TEdFUEY2TUNDOTlUV05SS0VLSzNIWEROM0dNNEdIV0Q' babel-node index.js\" \" npm run webpack \"",
     "start-dev-windows": "concurrently \" mongod \" \"set NODE_ENV=development && nodemon --exec NODE_ENV=development babel-node index.js\" \" npm run webpack \"",
     "start-production": "nodemon --exec NODE_ENV=production babel-node index.js",
     "start-docker": "babel-node index.js",
@@ -40,6 +40,7 @@
     "body-parser": "^1.18.3",
     "concurrently": "^4.1.0",
     "config": "^3.0.1",
+    "crypto-js": "^3.1.9-1",
     "css-loader": "^2.0.1",
     "express": "^4.16.4",
     "express-session": "^1.15.6",

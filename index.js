@@ -46,12 +46,16 @@ app.get('/assets/:image', (req, res) => {
 
 /* API imports */
 import accounts from './server/api/accounts.js';
+import inventory from './server/api/inventory.js';
 
 app.get('/lists', (req, res) => {
     /* Add news lists here, import above first */
     var Lists = {
-        accounts: accounts.apiList
+        accounts: accounts.apiList,
+        inventory: inventory.apiList
     };
+    console.log("LISTS");
+    console.log(Lists);
     res.setHeader('Content-Type', 'application/json');
     res.send(JSON.stringify(Lists));
 });

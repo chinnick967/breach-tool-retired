@@ -16,6 +16,16 @@ class ApiForm extends Component{
 
     componentDidMount() {
         this.state.form.request = this.props.data;
+        Object.keys(this.props.data.parameters).forEach((key) => {
+            var parameter = this.props.data.parameters[key];
+            if (parameter.type == "hidden") {
+                var form = this.state.form;
+                form[parameter.name] = parameter.value;
+                this.setState({form: form});
+            }
+        });
+        console.log("FORM");
+        console.log(this.state.form);
     }
 
     handleSubmit(e) {
@@ -67,21 +77,34 @@ class ApiForm extends Component{
         <div className="formWrap">
             <form onSubmit={this.handleSubmit}>
                 {this.props.data.parameters.map(element => (
-                    <label key={element.prettyName}>
-                        <span required={element.required}>{element.prettyName}</span>
-                        {element.type == "string" || element.type == "int" ?
-                            <input name={element.name} placeholder={element.placeholder} type="text" required={element.required} onChange={this.handleFieldChange} /> : null
+                    <div>
+                        {element.type != "hidden" ?
+                            <label key={element.prettyName}>
+                                <span required={element.required}>{element.prettyName}</span>
+                                {element.type == "string" || element.type == "int" ?
+                                    <input name={element.name} placeholder={element.placeholder} type="text" required={element.required} onChange={this.handleFieldChange} /> : null
+                                }
+                                {element.type == "blob" ?
+                                    <textarea name={element.name} placeholder={element.placeholder} type="text" required={element.required} onChange={this.handleFieldChange} /> : null
+                                }
+                                {element.type == "bool" ?
+                                    <div><div className="switch"><input name={element.name} onChange={this.handleFieldChange} type="checkbox" defaultChecked="true" /><span className="slider round"></span></div></div> : null
+                                }
+                                {element.type == "array" ?
+                                    <ArrayInput parent={element.name} name={element.name} array={"true"} placeholder={element.placeholder} required={element.required} handlefieldchange={this.handleFieldChange} /> : null
+                                }
+                                {element.type == "dropdown" ?
+                                    <select>
+                                    {
+                                        element.dropdown.map((option, index) => {
+                                            return <option key={option.value} value={option.value}>{option.text}</option>
+                                        })
+                                    }
+                                    </select> : null
+                                }
+                            </label> : null
                         }
-                        {element.type == "blob" ?
-                            <textarea name={element.name} placeholder={element.placeholder} type="text" required={element.required} onChange={this.handleFieldChange} /> : null
-                        }
-                        {element.type == "bool" ?
-                            <div><div className="switch"><input name={element.name} onChange={this.handleFieldChange} type="checkbox" defaultChecked="true" /><span className="slider round"></span></div></div> : null
-                        }
-                        {element.type == "array" ?
-                            <ArrayInput parent={element.name} name={element.name} array={"true"} placeholder={element.placeholder} required={element.required} handlefieldchange={this.handleFieldChange} /> : null
-                        }
-                    </label>
+                    </div>
                 ))}
                 <input type="submit" value="Submit" />
             </form>
