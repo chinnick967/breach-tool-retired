@@ -20,6 +20,7 @@ exports.requestApiCall = function(formData, callback) {
 
         if (request.authority) { // Any requests that change account data have this authority flag, authority has to be requested before account data can be modified.
             getAuthority(formData.CSAgentId, (response) => {
+                console.log(response);
                 if (response['API Response'].Status == "HoldingAuthority") {
                     releaseAuthority(formData.CSAgentId, response['API Response'].AccountId);
                     waitForReleaseAuthority(formData.CSAgentId, 0, (bool) => {
@@ -96,10 +97,6 @@ function apiCall(path, type, requestData, callback) {
         postData = JSON.stringify(requestData);
     }
 
-    /* HMAC */
-    var timeStamp = new Date(new Date().toUTCString());
-    var hashedPayload = generate_hmac_payload(postData, type, timeStamp);
-
     var options = {
         hostname: settings.config.api.url,
         path: path,
@@ -107,7 +104,7 @@ function apiCall(path, type, requestData, callback) {
         headers: {
             'Content-Type': 'application/json',
             'Content-Length': postData.length,
-            'Authorization': [settings.config.api.clientkey, type, timeStamp, generate_code(16), hashedPayload].join("")
+            'Authorization': getAuth(type, settings.config.api.url, postData)
         }
     }
     var req = https.request(options, (res) => {
@@ -117,6 +114,7 @@ function apiCall(path, type, requestData, callback) {
         res.on('data', (chunk) => {
             apiResponse += decoder.write(chunk);
         }).on('end', () => {
+            console.log("response received");
             /* HMAC */
             var key = CryptoJS.enc.Base64.parse(settings.config.api.secretkey);
             apiResponse = CryptoJS.enc.Base64.stringify(CryptoJS.HmacSHA256(apiResponse, key));
@@ -145,13 +143,42 @@ function apiCall(path, type, requestData, callback) {
         callback(JSON.stringify(response));
     });
     //req.write(postData);
-    req.write(hashedPayload);
+    console.log('request sent');
+    req.write(postData);
     req.end();
 }
 
-function generate_hmac_payload(data, type, timeStamp) {
-    var hashedPayload = CryptoJS.enc.Base64.stringify(CryptoJS.SHA256(data));
-    return hashedPayload
+function getAuth(httpMethod, requestUrl, requestBody) {
+
+    var CLIENT_KEY = settings.config.api.clientkey;
+    var SECRET_KEY = settings.config.api.secretkey;
+    var AUTH_TYPE = 'amx';
+        
+    requestUrl = encodeURIComponent(requestUrl).toLowerCase();
+
+    if (httpMethod == 'GET' || !requestBody) {
+        requestBody = '';
+    }
+
+    var hashedPayload = CryptoJS.enc.Base64.stringify(CryptoJS.SHA256(requestBody));
+    var nonce = generate_code(16);
+
+    var timestamp = Date.now()/1000;
+    timestamp = timestamp.toFixed(0);
+
+    var signatureRawData = [CLIENT_KEY,httpMethod,timestamp,nonce,hashedPayload].join("");
+    var key = CryptoJS.enc.Base64.parse(SECRET_KEY);
+    var hmacDigest = CryptoJS.enc.Base64.stringify(CryptoJS.HmacSHA256(signatureRawData, key));
+    var authHeader = AUTH_TYPE + ' ' + CLIENT_KEY + ":" + hmacDigest + ":" + nonce + ":" + timestamp;
+
+    console.log("RETURNED HEADER");
+    console.log(authHeader);
+    return authHeader;
+
+
+    /*var timeStamp = new Date(new Date().toUTCString());
+    var hashedPayload = CryptoJS.enc.Base64.stringify(CryptoJS.SHA256(postData));
+    var signature = [settings.config.api.clientkey, type, timeStamp, generate_code(16), hashedPayload].join("")*/
 }
 
 function generate_code(length) {
