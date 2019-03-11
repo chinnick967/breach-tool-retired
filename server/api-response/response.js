@@ -20,7 +20,6 @@ exports.requestApiCall = function(formData, callback) {
 
         if (request.authority) { // Any requests that change account data have this authority flag, authority has to be requested before account data can be modified.
             getAuthority(formData.CSAgentId, (response) => {
-                console.log(response);
                 if (response['API Response'].Status == "HoldingAuthority") {
                     releaseAuthority(formData.CSAgentId, response['API Response'].AccountId);
                     waitForReleaseAuthority(formData.CSAgentId, 0, (bool) => {
@@ -96,7 +95,6 @@ function apiCall(path, type, requestData, callback) {
     } else {
         postData = JSON.stringify(requestData);
     }
-
     var options = {
         hostname: settings.config.api.url,
         path: path,
@@ -114,10 +112,6 @@ function apiCall(path, type, requestData, callback) {
         res.on('data', (chunk) => {
             apiResponse += decoder.write(chunk);
         }).on('end', () => {
-            console.log("response received");
-            /* HMAC */
-            var key = CryptoJS.enc.Base64.parse(settings.config.api.secretkey);
-            apiResponse = CryptoJS.enc.Base64.stringify(CryptoJS.HmacSHA256(apiResponse, key));
             try {
                 apiResponse = JSON.parse(apiResponse);
             }
@@ -143,7 +137,6 @@ function apiCall(path, type, requestData, callback) {
         callback(JSON.stringify(response));
     });
     //req.write(postData);
-    console.log('request sent');
     req.write(postData);
     req.end();
 }
@@ -170,9 +163,6 @@ function getAuth(httpMethod, requestUrl, requestBody) {
     var key = CryptoJS.enc.Base64.parse(SECRET_KEY);
     var hmacDigest = CryptoJS.enc.Base64.stringify(CryptoJS.HmacSHA256(signatureRawData, key));
     var authHeader = AUTH_TYPE + ' ' + CLIENT_KEY + ":" + hmacDigest + ":" + nonce + ":" + timestamp;
-
-    console.log("RETURNED HEADER");
-    console.log(authHeader);
     return authHeader;
 
 
