@@ -183,11 +183,11 @@ function generate_code(length) {
 
 function waitForAuthority(CSAgentId, AccountId, counter, callback) {
     getAuthority(CSAgentId, (response) => {
-        if (response['API Response'].AccountId != AccountId && counter <= 10) {
+        if (response['API Response'].AccountId != AccountId && response['API Response'].Status != "HoldingAuthority" && counter <= 10) {
             setTimeout(function() {
                 waitForAuthority(CSAgentId, AccountId, counter++, callback);
             }, 1000);
-        } else if (response['API Response'].AccountId == AccountId) {
+        } else if (response['API Response'].AccountId == AccountId && response['API Response'].Status == "HoldingAuthority" ) {
             callback(true);
         } else {
             callback(false);
