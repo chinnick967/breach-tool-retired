@@ -231,5 +231,28 @@ exports.apiList = {
                 required: false
             }
         ]
+    },
+    releaseAuthority: {
+        name: "Release Authority",
+        description: "Release authority on an account",
+        type: "POST",
+        uri: "/api/cs/accountauthority/releasecontrol",
+        note: "Release authority on an account",
+        parameters: [
+            {
+                name: "AccountId",
+                prettyName: "User Account Id",
+                type: "int",
+                placeholder: "123456",
+                required: true
+            },
+            {
+                name: "Memo",
+                prettyName: "Memo",
+                placeholder: "User was using an inappropriate name.",
+                type: "blob",
+                required: true
+            }
+        ]
     }
 }
