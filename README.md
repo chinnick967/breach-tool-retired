@@ -36,7 +36,3 @@ These scripts can be found in the package.json file.
 Name: Dakota Chinnick
 
 Email: dakota@enmasse.com
-
-## Disclaimer
-
-This project is for the sole use of En Masse Entertainment and QC Games Incorporated. Unauthorized usage of this repository or any component of its code base could result in legal penalties.
