@@ -54,11 +54,7 @@ class ApiForm extends Component{
         var field = e.target;
         var form = this.state.form;
         if (field.type == "checkbox") { // handle boolean switches
-            if (field.value == "on") {
-                form[field.name] = true;
-            } else {
-                form[field.name] = false;
-            }
+            form[field.name] = field.value == "on";
         } else if (field.getAttribute('array')) { // handle arrays
             var parent = field.getAttribute('parent');
             var key = field.getAttribute('arrayid');
