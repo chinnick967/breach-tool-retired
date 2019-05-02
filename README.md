@@ -1,5 +1,5 @@
 # breach-cs-site
-Site for using Breach CS API
+Retired project I developed. Was a support/QA tool for online game Breach, but game was shut down due to budget issues with the developer. Was given permission to use as sample in my Github. Developed using React/NodeJs.
 
 ## Installation
 
