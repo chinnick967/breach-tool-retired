@@ -45,7 +45,7 @@
     "express": "^4.16.4",
     "express-session": "^1.15.6",
     "https": "^1.0.0",
-    "mongodb": "^3.1.10",
+    "mongodb": "^3.1.13",
     "node-sass": "^4.11.0",
     "nodemon": "^1.18.9",
     "react": "^16.6.3",
